@@ -1,0 +1,13 @@
+{
+    "app_name": "Qoiu Tasks",
+    "save": "Сохранить",
+    "add": "Добавить",
+    "apply": "Применить",
+    "delete": "Удалить",
+    "enter_text": "Введите текст",
+    "error_message": "Произошла ошибка",
+    "page_develop": "Страница находится в разработке",
+    "menu_lists": "Списки",
+    "menu_calendar": "Календарь",
+    "menu_settings": "Настройки"
+}

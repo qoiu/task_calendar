@@ -1,0 +1,3 @@
+enum ScreenTag {
+
+MAIN_LISTS, MAIN_CALENDAR, MAIN_SETTINGS}
