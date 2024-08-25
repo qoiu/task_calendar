@@ -1,6 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:task_calendar/screens/lists/main_custom_list_screen.dart';
+import 'package:task_calendar/screens/lists/main_list_screen.dart';
 import 'package:task_calendar/screens/stub_screen.dart';
 import 'package:task_calendar/utils/enum/screen_tag.dart';
 import 'package:task_calendar/utils/utils.dart';
@@ -30,16 +32,16 @@ class _MainAppPage extends State<MainAppPage> {
   void initTabs() {
     tabs = [
       TabItem(
-          icon: "assets/svg/menu_calendar.svg",
+          icon: "assets/svg/menu_lists.svg",
           title: () => getString().menu_lists,
           tag: ScreenTag.MAIN_LISTS.name,
-          screenBuilder: (context) => const StubScreen('Main_lists'),
+          screenBuilder: (context) => const MainListScreen(),
           index: 0),
       TabItem(
-          icon: "assets/svg/menu_lists.svg",
+          icon: "assets/svg/menu_calendar.svg",
           title: () => getString().menu_calendar,
           tag: ScreenTag.MAIN_CALENDAR.name,
-          screenBuilder: (context) => StubScreen(getString().page_develop),
+          screenBuilder: (context) => const MainCustomListScreen(),
           index: 1),
       TabItem(
           icon: "assets/svg/menu_settings.svg",
@@ -96,23 +98,25 @@ class _MainAppPage extends State<MainAppPage> {
               showUnselectedLabels: true,
               type: BottomNavigationBarType.fixed,
             ),
-      body: Stack(
-        children: [
-          IndexedStack(
-              index: currentIndex,
-              children: tabs.map((e) => e.getWidget()).toList()),
-          Container(
-            alignment: Alignment.topRight,
-            padding: const EdgeInsets.only(top: 80, right: 10),
-            child: kDebugMode
-                ? const Column(
-                    children: [
-                      // Text("v.0.0.14",style: getTextStyle(context).bodySmall?.copyWith(fontSize: 8),),
-                    ],
-                  )
-                : Container(),
-          ),
-        ],
+      body: SafeArea(
+        child: Stack(
+          children: [
+            IndexedStack(
+                index: currentIndex,
+                children: tabs.map((e) => e.getWidget()).toList()),
+            Container(
+              alignment: Alignment.topRight,
+              padding: const EdgeInsets.only(top: 80, right: 10),
+              child: kDebugMode
+                  ? const Column(
+                      children: [
+                        // Text("v.0.0.14",style: getTextStyle(context).bodySmall?.copyWith(fontSize: 8),),
+                      ],
+                    )
+                  : Container(),
+            ),
+          ],
+        ),
       ),
     );
   }
