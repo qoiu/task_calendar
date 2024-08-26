@@ -1,12 +1,12 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:task_calendar/database/tasks_database.dart';
 import 'package:task_calendar/screens/lists/main_custom_list_screen.dart';
 import 'package:task_calendar/screens/lists/main_list_screen.dart';
 import 'package:task_calendar/screens/stub_screen.dart';
 import 'package:task_calendar/utils/enum/screen_tag.dart';
 import 'package:task_calendar/utils/utils.dart';
-
 
 String? currentRoute;
 
@@ -25,6 +25,7 @@ class _MainAppPage extends State<MainAppPage> {
   @override
   void initState() {
     super.initState();
+    tasksDatabase.init();
     initTabs();
     tabs[0].isLoaded = true;
   }
@@ -74,30 +75,29 @@ class _MainAppPage extends State<MainAppPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      bottomNavigationBar:
-      BottomNavigationBar(
-              currentIndex: currentIndex,
-              items: tabs.map((e) => e.getBottomBarItem(currentIndex)).toList(),
-              onTap: (index) {
-                setState(() {
-                  tabs[index].isLoaded = true;
-                  if (index == currentIndex) {
-                    Navigator.of(tabs[index].key.currentContext!)
-                        .popUntil((route) => route.isFirst);
-                  } else {
-                    currentIndex = index;
-                  }
-                });
-              },
-              selectedItemColor: getColorScheme().primary,
-              unselectedItemColor: getColorScheme().outline,
-              unselectedFontSize: 11,
-              selectedFontSize: 11,
-              elevation: 2,
-              backgroundColor: getColorScheme().surface,
-              showUnselectedLabels: true,
-              type: BottomNavigationBarType.fixed,
-            ),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: currentIndex,
+        items: tabs.map((e) => e.getBottomBarItem(currentIndex)).toList(),
+        onTap: (index) {
+          setState(() {
+            tabs[index].isLoaded = true;
+            if (index == currentIndex) {
+              Navigator.of(tabs[index].key.currentContext!)
+                  .popUntil((route) => route.isFirst);
+            } else {
+              currentIndex = index;
+            }
+          });
+        },
+        selectedItemColor: getColorScheme().primary,
+        unselectedItemColor: getColorScheme().outline,
+        unselectedFontSize: 11,
+        selectedFontSize: 11,
+        elevation: 2,
+        backgroundColor: getColorScheme().surface,
+        showUnselectedLabels: true,
+        type: BottomNavigationBarType.fixed,
+      ),
       body: SafeArea(
         child: Stack(
           children: [
