@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:sqflite/sqflite.dart';
 import 'package:task_calendar/components/svg_button.dart';
 import 'package:task_calendar/database/tasks_database.dart';
 import 'package:task_calendar/models/task.dart';
-import 'package:task_calendar/screens/lists/components/list_date_time_item.dart';
 import 'package:task_calendar/screens/lists/models/custom_data.dart';
 import 'package:task_calendar/utils/utils.dart';
 
@@ -15,29 +15,35 @@ class MainCustomListScreen extends StatefulWidget {
   State<MainCustomListScreen> createState() => _MainCustomListScreenState();
 }
 
-class _MainCustomListScreenState extends State<MainCustomListScreen> {
-  CustomListController offsetController = CustomListController();
+class _MainCustomListScreenState extends State<MainCustomListScreen>
+    with CustomListController {
   List<Task> tasks = [];
 
   @override
-  void initState() {
-    super.initState();
-    offsetController.updateDate = updateDates;
+  onTaskClick(UiTask task) {}
+
+  @override
+  onTimeClick(UiTime time) async {
+    await tasksDatabase.database.insert(
+      'tasks',
+      Task(title: 'new task', start: time.time).toDb(),
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+    updateDates();
   }
 
+  @override
   updateDates() async {
     'updateDates'.dpRed().printLong();
+    drawTaskHelper = DrawTaskHelper.fromToday(currentDate, tasks);
+    await Future.delayed(const Duration(milliseconds: 100));
+    setState(() {});
     try {
-      // var id = await tasksDatabase.database.insert(
-      //     'tasks',
-      //     Task(title: 'test', start: DateTime.now(), end: DateTime.now())
-      //         .toDb(),
-      //     conflictAlgorithm: ConflictAlgorithm.replace);
-      // 'create $id'.dpGreen().print();
       tasks = (await tasksDatabase.database.query('tasks'))
           .map((e) => Task.fromJson(e))
           .toList();
       tasks.toString().dpRed().printLong();
+      drawTaskHelper = DrawTaskHelper.fromToday(currentDate, tasks);
       'updateDates'.dpRed().print();
     } on Exception catch (e) {
       e.toString().dpRed().printLong();
@@ -52,29 +58,26 @@ class _MainCustomListScreenState extends State<MainCustomListScreen> {
       children: [
         GestureDetector(
             onVerticalDragUpdate: (drag) {
-              offsetController.yOffset += drag.delta.dy;
+              yOffset += drag.delta.dy;
               setState(() {});
+            },
+            onTapDown: (details) {
+              onTap(Offset(details.localPosition.dx,
+                  details.localPosition.dy - yOffset));
             },
             child: Container(
                 color: Colors.transparent,
                 width: double.maxFinite,
                 height: double.maxFinite,
                 child: CustomPaint(
-                  painter: ListPainter(
-                      datesHelper: DrawTaskHelper(dates)List.generate(50, (i) {
-                        return ListDateTimeItem(formatDate.format(
-                            offsetController.currentDate
-                                .add(Duration(days: i - 1))));
-                      }),
-                      tasks: tasks,
-                      controller: offsetController),
+                  painter: ListPainter(this),
                 ))),
         Container(
           alignment: Alignment.bottomRight,
           padding: const EdgeInsets.all(15),
           child: SvgButton('assets/svg/ic_plus.svg', () {
             setState(() {
-              offsetController.yOffset -= 100;
+              yOffset -= 100;
             });
           }),
         )

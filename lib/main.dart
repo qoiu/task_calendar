@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:task_calendar/database/tasks_database.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:task_calendar/screens/main_app_screen.dart';
 import 'package:task_calendar/themes.dart';
 import 'package:task_calendar/utils/utils.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 void main() {
   runApp(const MyApp());

@@ -32,3 +32,7 @@ extension OppositeColor on Color {
     return sum > 128 ? MainTheme.textColor : MainTheme.textColorWhite;
   }
 }
+
+extension NullableExtention<T extends dynamic> on T {
+  R? let<R>(R Function(T that) op) => this == null ? null : op(this);
+}
