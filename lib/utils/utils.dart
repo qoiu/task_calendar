@@ -15,7 +15,7 @@ AppLocalizations getString([BuildContext? context]) =>
     AppLocalizations.of(context ?? rootNavigatorKey.currentContext!);
 
 DateFormat formatDate = DateFormat("dd.MM.yyyy");
-DateFormat formatTime = DateFormat("hh:mm");
+DateFormat formatTime = DateFormat("HH:mm");
 
 extension PrintString on String {
   String dpRed() => "\x1B[31m$this\x1B[0m";

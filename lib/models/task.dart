@@ -25,7 +25,7 @@ class Task {
 
   Task.fromJson(Map<String, dynamic> json)
       : id = json['id'],
-        title = json['title'],
+        title = json['title'].toString(),
         description = json['description'],
         color = json['color'] ?? MainTheme.accent,
         start = json['start'] != null

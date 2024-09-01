@@ -3,6 +3,7 @@ import 'package:sqflite/sqflite.dart';
 import 'package:task_calendar/components/svg_button.dart';
 import 'package:task_calendar/database/tasks_database.dart';
 import 'package:task_calendar/models/task.dart';
+import 'package:task_calendar/screens/lists/components/title_controller.dart';
 import 'package:task_calendar/screens/lists/models/custom_data.dart';
 import 'package:task_calendar/utils/utils.dart';
 
@@ -18,24 +19,34 @@ class MainCustomListScreen extends StatefulWidget {
 class _MainCustomListScreenState extends State<MainCustomListScreen>
     with CustomListController {
   List<Task> tasks = [];
+  TitleController? titleController;
 
   @override
   onTaskClick(UiTask task) {}
 
   @override
   onTimeClick(UiTime time) async {
-    await tasksDatabase.database.insert(
-      'tasks',
-      Task(title: 'new task', start: time.time).toDb(),
-      conflictAlgorithm: ConflictAlgorithm.replace,
-    );
-    updateDates();
+    setState(() {
+      titleController = TitleController((title)async{
+        try {
+          await tasksDatabase.database.insert(
+            'tasks',
+            Task(title: title, start: time.time).toDb(),
+            conflictAlgorithm: ConflictAlgorithm.replace,
+          );
+        }catch(e){
+          e.toString().dpRed().printLong();
+        }
+        titleController=null;
+        updateDates();
+      });
+    });
   }
 
   @override
   updateDates() async {
     'updateDates'.dpRed().printLong();
-    drawTaskHelper = DrawTaskHelper.fromToday(currentDate, tasks);
+    // drawTaskHelper = DrawTaskHelper.fromToday(currentDate, tasks);
     await Future.delayed(const Duration(milliseconds: 100));
     setState(() {});
     try {
@@ -80,7 +91,10 @@ class _MainCustomListScreenState extends State<MainCustomListScreen>
               yOffset -= 100;
             });
           }),
-        )
+        ),
+        if(titleController!=null)...{
+          TitleItem(titleController!)
+        }
       ],
     );
   }
