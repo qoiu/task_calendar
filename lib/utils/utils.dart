@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:intl/intl.dart';
+import 'package:task_calendar/screens/lists/models/custom_data.dart';
 import 'package:task_calendar/themes.dart';
 
 final GlobalKey<NavigatorState> rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -31,6 +32,12 @@ extension OppositeColor on Color {
     var sum = (red + green + blue) / 3;
     return sum > 128 ? MainTheme.textColor : MainTheme.textColorWhite;
   }
+}
+
+DateTime? tryToGetTime(dynamic data){
+  if(data is UiTime)return data.time;
+  if(data is UiTask)return data.task.start;
+  return null;
 }
 
 extension NullableExtention<T extends dynamic> on T {

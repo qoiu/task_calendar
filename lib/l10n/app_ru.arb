@@ -9,5 +9,8 @@
     "page_develop": "Страница находится в разработке",
     "menu_lists": "Списки",
     "menu_calendar": "Календарь",
-    "menu_settings": "Настройки"
+    "menu_settings": "Настройки",
+    "menu_settings_category": "Настройка категорий",
+    "menu_settings_task": "Настройка задач",
+    "menu_settings_currency": "Настройка валют"
 }

@@ -15,7 +15,9 @@ class MainTheme {
         onPrimary: textColor,
         surface: white,
         secondary: taskColor,
-        onSecondary: textColorWhite,),
+        onSecondary: textColorWhite,
+        outline: textColorWhite,
+    ),
     textSelectionTheme: TextSelectionThemeData(
         cursorColor: accent,
         selectionColor: accent.withOpacity(0.4),

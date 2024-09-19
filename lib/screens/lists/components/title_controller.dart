@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:task_calendar/components/task_widget.dart';
+import 'package:task_calendar/models/task.dart';
 import 'package:task_calendar/screens/lists/components/main_button.dart';
 import 'package:task_calendar/screens/lists/components/text_field.dart';
+import 'package:task_calendar/screens/lists/models/custom_data.dart';
 import 'package:task_calendar/utils/utils.dart';
 
 class TitleItem extends StatefulWidget {
@@ -45,6 +48,20 @@ class _TitleItemState extends State<TitleItem> {
         child: Column(
           children: [
             CommonTextField(controller: textEditingController, focusNode: focusNode, title: 'Название',),
+            const SizedBox(height: 10),
+            Draggable(
+              onDragUpdate: widget.controller.draggableActions.onDragUpdate,
+              onDragStarted: () {
+                widget.controller.draggableTask = Task(title: 'temp', start: DateTime.now());
+                widget.controller.draggableActions.onDragStarted();
+              },
+              onDragEnd: widget.controller.draggableActions.onDragEnd,
+              feedback: widget.controller.draggableTask!=null?Opacity(opacity:0.5, child: TaskWidget(task: widget.controller.draggableTask!)):Container(width: 200,height: 20,color: Colors.yellow),
+              child: Container(
+                width: 50, height: 50,color: Colors.red,
+              ),
+            ),
+            const SizedBox(height: 10),
             MainButton('Создать', ()=>widget.controller.onFinish(textEditingController.text))
           ],
         ),
@@ -55,6 +72,8 @@ class _TitleItemState extends State<TitleItem> {
 
 class TitleController{
   Function(String title) onFinish;
+  DraggableActions draggableActions;
+  Task? draggableTask;
 
-  TitleController(this.onFinish);
+  TitleController(this.onFinish, this.draggableActions);
 }

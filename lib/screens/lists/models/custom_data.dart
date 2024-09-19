@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:task_calendar/models/task.dart';
 import 'package:task_calendar/utils/utils.dart';
 
-mixin CustomListController {
+mixin CustomListController{
   double yOffset = 0.0;
   DateTime currentDate = DateTime.now();
   DrawTaskHelper drawTaskHelper = DrawTaskHelper.fromToday(DateTime.now());
@@ -28,6 +28,12 @@ mixin CustomListController {
 
   onTaskClick(UiTask task) {}
   onTimeClick(UiTime time) {}
+}
+
+abstract class DraggableActions{
+  onDragStarted();
+  onDragUpdate(DragUpdateDetails details);
+  onDragEnd(DraggableDetails details);
 }
 
 class DrawTaskHelper {

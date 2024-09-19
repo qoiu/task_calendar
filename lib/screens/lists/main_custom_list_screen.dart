@@ -16,10 +16,11 @@ class MainCustomListScreen extends StatefulWidget {
   State<MainCustomListScreen> createState() => _MainCustomListScreenState();
 }
 
-class _MainCustomListScreenState extends State<MainCustomListScreen>
-    with CustomListController {
+class _MainCustomListScreenState extends State<MainCustomListScreen>  with CustomListController implements DraggableActions
+ {
   List<Task> tasks = [];
   TitleController? titleController;
+  Task? draggableTask;
 
   @override
   onTaskClick(UiTask task) {}
@@ -39,7 +40,7 @@ class _MainCustomListScreenState extends State<MainCustomListScreen>
         }
         titleController=null;
         updateDates();
-      });
+      }, this);
     });
   }
 
@@ -61,6 +62,36 @@ class _MainCustomListScreenState extends State<MainCustomListScreen>
     } finally {
       setState(() {});
     }
+  }
+
+  @override
+  onDragUpdate(DragUpdateDetails details){
+    if(titleController?.draggableTask==null)return;
+    var position = Offset(details.localPosition.dx, details.localPosition.dy-yOffset-50);
+    var region = regions.entries.where((e)=>e.key.contains(position));
+    region.firstOrNull?.value.toString().print();
+    var time = tryToGetTime(region.firstOrNull?.value);
+    time.toString().print();
+    if(time != null){
+      if(draggableTask!.start.hour==time.hour)return;
+      draggableTask!.start=time;
+      if(!tasks.contains(draggableTask)){
+        tasks.add(draggableTask!);
+      }
+      drawTaskHelper = DrawTaskHelper.fromToday(currentDate, tasks);
+      setState(() {});
+    }
+  }
+
+  @override
+  onDragEnd(DraggableDetails details) {
+    draggableTask=null;
+    setState(() {});
+  }
+
+  @override
+  onDragStarted() {
+    draggableTask??=titleController?.draggableTask;
   }
 
   @override
@@ -98,4 +129,5 @@ class _MainCustomListScreenState extends State<MainCustomListScreen>
       ],
     );
   }
+
 }
