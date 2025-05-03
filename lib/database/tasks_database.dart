@@ -7,13 +7,13 @@ class TasksDatabase {
   late String path;
   late Database database;
 
-  init() async {
+  Future init() async {
     databasesPath = await getDatabasesPath();
-    String path = '$databasesPath/demo.db';
+    String path = '$databasesPath/tasks.db';
     database = await openDatabase(path, version: 1,
         onCreate: (Database db, int version) async {
       await db.execute(
-          'CREATE TABLE tasks (id INTEGER PRIMARY KEY, start LONG, end LONG, title STRING NOT NULL, description STRING)');
+          'CREATE TABLE tasks (id INTEGER PRIMARY KEY, date STRING, time STRING, title STRING NOT NULL, description STRING, extra STRING)');
     });
   }
 }

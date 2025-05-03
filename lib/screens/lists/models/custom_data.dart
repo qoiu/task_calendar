@@ -55,8 +55,8 @@ class DrawTaskHelper {
     });
     if (tasks != null) {
       tasks.forEach((task) {
-        var date = formatDate.format(task.start);
-        var time = formatTime.format(task.start);
+        var date = task.start?.let((e)=>formatDate.format(e));
+        var time = task.start?.let((e)=>formatTime.format(e));
         dates
             .where((e) => e.title == date)
             .firstOrNull

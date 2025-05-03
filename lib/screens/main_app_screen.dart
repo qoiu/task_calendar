@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:task_calendar/database/tasks_database.dart';
 import 'package:task_calendar/screens/lists/main_custom_list_screen.dart';
+import 'package:task_calendar/screens/lists/main_list_screen.dart';
 import 'package:task_calendar/screens/menu/menu_page.dart';
 import 'package:task_calendar/screens/stub_screen.dart';
 import 'package:task_calendar/utils/enum/screen_tag.dart';
@@ -36,7 +37,7 @@ class _MainAppPage extends State<MainAppPage> {
           icon: "assets/svg/menu_lists.svg",
           title: () => getString().menu_lists,
           tag: ScreenTag.MAIN_LISTS.name,
-          screenBuilder: (context) => const MainCustomListScreen(),
+          screenBuilder: (context) => const MainListScreen(),
           index: 0),
       TabItem(
           icon: "assets/svg/menu_calendar.svg",

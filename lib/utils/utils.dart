@@ -17,6 +17,7 @@ AppLocalizations getString([BuildContext? context]) =>
 
 DateFormat formatDate = DateFormat("dd.MM.yyyy");
 DateFormat formatTime = DateFormat("HH:mm");
+DateFormat formatDateTime = DateFormat("dd.MM.yyyy HH:mm");
 
 extension PrintString on String {
   String dpRed() => "\x1B[31m$this\x1B[0m";
@@ -41,5 +42,5 @@ DateTime? tryToGetTime(dynamic data){
 }
 
 extension NullableExtention<T extends dynamic> on T {
-  R? let<R>(R Function(T that) op) => this == null ? null : op(this);
+  R? let<R>(R? Function(T that) op) => this == null ? null : op(this);
 }

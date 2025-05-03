@@ -73,7 +73,7 @@ class _MainCustomListScreenState extends State<MainCustomListScreen>  with Custo
     var time = tryToGetTime(region.firstOrNull?.value);
     time.toString().print();
     if(time != null){
-      if(draggableTask!.start.hour==time.hour)return;
+      if(draggableTask!.start?.hour==time.hour)return;
       draggableTask!.start=time;
       if(!tasks.contains(draggableTask)){
         tasks.add(draggableTask!);
