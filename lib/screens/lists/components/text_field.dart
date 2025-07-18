@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:task_calendar/utils/utils.dart';
+import 'package:qoiu_utils/qoiu_utills.dart';
 
 class CommonTextField extends StatelessWidget {
   final String? hint;
@@ -57,8 +57,7 @@ class CommonTextField extends StatelessWidget {
 
   static InputBorder outlineInputBorder(bool isCorrect) => OutlineInputBorder(
       borderRadius: const BorderRadius.all(Radius.circular(5)),
-      borderSide: BorderSide(
-          color: getColorScheme().onPrimary));
+      borderSide: BorderSide(color: getColorScheme().onPrimary));
 
   @override
   Widget build(BuildContext context) {
@@ -66,8 +65,9 @@ class CommonTextField extends StatelessWidget {
       title != null
           ? Text(
               title!,
-              style: getTextStyle().bodyLarge?.copyWith(
-                  color:  getColorScheme().onPrimary),
+              style: getTextStyle()
+                  .bodyLarge
+                  ?.copyWith(color: getColorScheme().onPrimary),
               textAlign: TextAlign.start,
             )
           : Container(),

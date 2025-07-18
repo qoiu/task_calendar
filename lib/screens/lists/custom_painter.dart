@@ -1,9 +1,9 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:qoiu_utils/qoiu_utills.dart';
 import 'package:task_calendar/models/task.dart';
 import 'package:task_calendar/screens/lists/models/custom_data.dart';
-import 'package:task_calendar/utils/utils.dart';
 
 class ListPainter extends CustomPainter {
   final CustomListController controller;

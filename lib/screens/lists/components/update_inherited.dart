@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:task_calendar/utils/utils.dart';
+import 'package:qoiu_utils/qoiu_utills.dart';
 
 class MainUpdateWidget extends InheritedWidget {
   final Function(VoidCallback fn) _setState;

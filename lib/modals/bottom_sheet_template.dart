@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:task_calendar/components/text_builder.dart';
+import 'package:qoiu_utils/components/common_text_builder.dart';
+import 'package:qoiu_utils/qoiu_utills.dart';
 import 'package:task_calendar/utils/utils.dart';
 
 class BottomSheetTemplate extends StatelessWidget {
@@ -87,11 +87,9 @@ class BottomSheetTemplate extends StatelessWidget {
                           width: 50,
                           height: 50,
                           alignment: Alignment.topRight,
-                          child: Padding(
-                              padding: const EdgeInsets.all(16),
-                              child: SvgPicture.asset(
-                                  "assets/svg/ui/close_button.svg",
-                                  color: getColorScheme().onSurface)),
+                          child: const Padding(
+                              padding: EdgeInsets.all(16),
+                              child: Icon(Icons.close)),
                         ),
                       ))
                 ],

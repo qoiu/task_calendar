@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:task_calendar/components/text_builder.dart';
-import 'package:task_calendar/utils/utils.dart';
+import 'package:qoiu_utils/components/common_text_builder.dart';
+import 'package:qoiu_utils/qoiu_utills.dart';
 
 class MenuButton extends StatelessWidget {
   final String title;

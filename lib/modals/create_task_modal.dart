@@ -29,6 +29,7 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             CommonTextField(controller: titleController),
+            const SizedBox(height: 10),
             MainButton('Создать', ()async{
               await taskQueries.add(Task(title: titleController.text));
               Navigator.of(context).pop(true);

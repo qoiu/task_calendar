@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-import '../../../utils/utils.dart';
+import 'package:qoiu_utils/qoiu_utills.dart';
 
 class MainButton extends StatelessWidget {
   final Function() onClick;
