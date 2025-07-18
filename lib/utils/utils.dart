@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:intl/intl.dart';
+import 'package:qoiu_utils/navigation.dart';
 import 'package:task_calendar/screens/lists/models/custom_data.dart';
 import 'package:task_calendar/themes.dart';
-
-final GlobalKey<NavigatorState> rootNavigatorKey = GlobalKey<NavigatorState>();
-
 
 AppLocalizations getString([BuildContext? context]) =>
     AppLocalizations.of(context ?? rootNavigatorKey.currentContext!);

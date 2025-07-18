@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:qoiu_utils/qoiu_utills.dart';
 import 'package:task_calendar/database/tasks_database.dart';
-import 'package:task_calendar/screens/lists/main_custom_list_screen.dart';
 import 'package:task_calendar/screens/lists/main_list_screen.dart';
 import 'package:task_calendar/screens/menu/menu_page.dart';
 import 'package:task_calendar/screens/stub_screen.dart';
@@ -177,9 +176,9 @@ class TabItem {
                 const EdgeInsets.only(left: 5, right: 5, top: 5, bottom: 3),
             child: SvgPicture.asset(
               icon,
-              color: currentIndex == index
+              colorFilter: (currentIndex == index
                   ? getColorScheme().primary
-                  : getColorScheme().onPrimary,
+                  : getColorScheme().onPrimary).defaultFilter(),
               height: 20,
             ),
           ),
