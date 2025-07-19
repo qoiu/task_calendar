@@ -9,18 +9,26 @@ AppLocalizations getString([BuildContext? context]) =>
     AppLocalizations.of(context ?? rootNavigatorKey.currentContext!);
 
 DateFormat formatDate = DateFormat("dd.MM.yyyy");
+DateFormat formatDateWithWeekday = DateFormat("E dd.MM.yyyy");
 DateFormat formatTime = DateFormat("HH:mm");
 DateFormat formatDateTime = DateFormat("dd.MM.yyyy HH:mm");
 
 extension OppositeColor on Color {
   Color oppositeColor() {
-    var sum = (red + green + blue) / 3;
-    return sum > 128 ? MainTheme.textColor : MainTheme.textColorWhite;
+    var sum = (r + g + b) / 3;
+    return sum > 0.5 ? MainTheme.textColor : MainTheme.textColorWhite;
+  }
+
+  Color oppositeExtraColor(double strength) {
+    var sum = (r + g + b) / 3;
+    strength = sum > 0.5 ? strength : strength * -1;
+    return Color.from(
+        alpha: a, red: r + strength, green: g + strength, blue: b + strength);
   }
 }
 
-DateTime? tryToGetTime(dynamic data){
-  if(data is UiTime)return data.time;
-  if(data is UiTask)return data.task.start;
+DateTime? tryToGetTime(dynamic data) {
+  if (data is UiTime) return data.time;
+  if (data is UiTask) return data.task.start;
   return null;
 }

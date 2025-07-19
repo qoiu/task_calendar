@@ -9,6 +9,7 @@ class ListDateItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var weekday = formatDate.tryParse(date)?.let((e)=>formatDateWithWeekday.format(e))??date;
     return Center(
       child: Container(
         decoration: BoxDecoration(
@@ -16,7 +17,7 @@ class ListDateItem extends StatelessWidget {
           borderRadius: BorderRadius.circular(20)
         ),
         padding: const EdgeInsets.all(5),
-        child: TextBuilder(date).build(),
+        child: TextBuilder((weekday).replaceRange(0, 1, weekday.substring(0,1).toUpperCase())).build(),
       ),
     );
   }

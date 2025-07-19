@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:qoiu_utils/components/common_text_builder.dart';
 import 'package:qoiu_utils/qoiu_utills.dart';
 import 'package:task_calendar/database/task_queries.dart';
 import 'package:task_calendar/models/task.dart';
@@ -37,6 +38,11 @@ class _ListDateTimeItemState extends State<ListDateTimeItem> with UpdaterMixin {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+  }
+
+  @override
   onUpdate() {
     'onUpdate'.dpRed().print();
     getTasks();
@@ -66,14 +72,15 @@ class _ListDateTimeItemState extends State<ListDateTimeItem> with UpdaterMixin {
         ...generateItems.map((i) => ListTimeItem(widget.date,
               i.time,
               listController: widget.listController,
-              update: () {
+              update: ()=>setState(() {}),
+              updateScreen: () {
                 widget.update();
                 setState(
                   () {},
                 );
               },
               task: tasks.where((e) => e.time == i.time).firstOrNull, refreshDay: getTasks,
-            ))
+            )),
       ],
     );
   }

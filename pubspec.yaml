@@ -15,6 +15,7 @@ dependencies:
   flutter_svg: any
   sqflite: ^2.3.3+1
   infinite_scroll_pagination: any
+  app_tutorial: ^1.0.6
 
   qoiu_utils:
     git:
@@ -31,7 +32,6 @@ flutter:
   generate: true
 
   assets:
-    - assets/images/
     - assets/svg/
 
   uses-material-design: true

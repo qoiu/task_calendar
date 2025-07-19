@@ -29,13 +29,14 @@ TaskQueries taskQueries = TaskQueries();
   Future add(Task task)async {
      'add task: ${task.toDb()}'.print();
      tasksDatabase.database.insert('tasks', task.toDb());
+     ['Задача добавлена'.dpRed(),task.toDb()].print();
   }
 
   Future update(Task task)async {
-    'update task: ${task.toDb()}'.print();
     tasksDatabase.database.update('tasks', task.toDb(),
     where: 'id = ?',
     whereArgs: [task.id],);
+    ['Задача обновлена'.dpRed(),task.toDb()].print();
   }
 
    Future<void> deleteTask(int id) async {
@@ -44,5 +45,6 @@ TaskQueries taskQueries = TaskQueries();
        where: 'id = ?',
        whereArgs: [id],
      );
+     ['Задача удалена'.dpRed(),id].print();
    }
 }

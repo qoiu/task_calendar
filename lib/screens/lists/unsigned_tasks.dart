@@ -1,69 +1,133 @@
 import 'package:flutter/material.dart';
+import 'package:qoiu_utils/components/common_text_builder.dart';
 import 'package:qoiu_utils/qoiu_utills.dart';
 import 'package:task_calendar/components/task_widget.dart';
 import 'package:task_calendar/database/task_queries.dart';
 import 'package:task_calendar/modals/create_task_modal.dart';
 import 'package:task_calendar/models/task.dart';
-import 'package:task_calendar/models/task_property.dart';
 import 'package:task_calendar/screens/lists/components/main_list_controller.dart';
-import 'package:task_calendar/utils/utils.dart';
+import 'package:task_calendar/screens/lists/components/update_inherited.dart';
+
+class UnsignedTasksController {
+  bool showPlan = false;
+
+  double offset = 2500;
+  late AnimationController _animationController;
+  late Animation<double> _animation;
+  VoidCallback update;
+  UpdateController updateDataController = UpdateController();
+  List<Task> tasks = [];
+
+  UnsignedTasksController({required this.update});
+
+  hide(double height) {
+    showPlan = false;
+    double modifier = 1 - (offset / height);
+    offset = height;
+    _animationController.animateTo(height,
+        duration: Duration(milliseconds: (500 * modifier).toInt()));
+  }
+
+  show() {
+    showPlan = true;
+
+    offset = 0;
+    _animationController.animateTo(0,
+        duration: const Duration(milliseconds: 500));
+    update();
+  }
+
+  createTask() async {
+    var result = await const CreateTaskModal().show();
+    if (result == true) {
+      getTasks();
+    }
+  }
+
+
+  getTasks() async {
+    tasks = await taskQueries.getTasksUnsigned();
+    tasks.insert(0, Task(title: 'test'));
+    updateDataController.update();
+  }
+}
 
 class UnsignedTasks extends StatefulWidget {
-  final bool showPlan;
   final VoidCallback update;
-  final VoidCallback hideScreen;
+  final UnsignedTasksController controller;
   final MainListController listController;
 
   const UnsignedTasks(
       {super.key,
-      required this.showPlan,
       required this.update,
-      required this.hideScreen,
+      required this.controller,
       required this.listController});
 
   @override
   State<UnsignedTasks> createState() => _UnsignedTasksState();
 }
 
+const _hideCoef = 0.3;
+
 class _UnsignedTasksState extends State<UnsignedTasks>
-    with SingleTickerProviderStateMixin {
-  List<Task> tasks = [];
-  double offset = 0;
-  late AnimationController _controller;
-  late Animation<double> _animation;
+    with SingleTickerProviderStateMixin, UpdaterMixin {
+  List<Task> get tasks=> widget.controller.tasks;
+
+  double get offset => widget.controller.offset;
+
+  AnimationController get _animationController =>
+      widget.controller._animationController;
+
+  Animation<double> get _animation => widget.controller._animation;
+
+  @override
+  UpdateController get updateController => widget.controller.updateDataController;
 
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController.unbounded(vsync: this);
-    _animation = _controller;
-    getTasks();
+    widget.controller._animationController =
+        AnimationController.unbounded(vsync: this);
+    widget.controller._animation = widget.controller._animationController;
+    widget.controller.getTasks();
+    WidgetsBinding.instance.addPostFrameCallback((_){
+
+    });
   }
 
-  getTasks() async {
-    tasks = await taskQueries.getTasksUnsigned();
-    setState(() {});
-  }
 
   @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
-        animation: _controller,
+        animation: widget.controller._animationController,
         builder: (context, child) {
           return Transform.translate(
-            offset: Offset(0, _animation.value),
+            offset: Offset(0, widget.controller._animation.value),
             child: child,
           );
         },
         child: GestureDetector(
           onVerticalDragUpdate: (drag) {
-            if(offset>MediaQuery.of(context).size.height/2){
-              ['more than half'].print();
+            if (!widget.controller.showPlan) return;
+            if (widget.controller.offset >
+                MediaQuery.of(context).size.height * _hideCoef) {
+              'more than half'.dpRed().print();
+              widget.controller.hide(MediaQuery.of(context).size.height);
+              return;
             }
-            offset += drag.delta.dy;
-            _controller.value = offset;
+            widget.controller.offset += drag.delta.dy;
+            ['offset', offset].print();
+            if ((_animation.value - offset).abs() > 3) {
+              _animationController.value = offset;
+            }
             if (offset < 0) {
-              offset = 0;
+              widget.controller.offset = 0;
+            }
+          },
+          onVerticalDragEnd: (a) {
+            if (widget.controller.offset <
+                MediaQuery.of(context).size.height * _hideCoef) {
+              widget.controller.show();
             }
           },
           child: Transform.translate(
@@ -81,12 +145,7 @@ class _UnsignedTasksState extends State<UnsignedTasks>
                     runSpacing: 10,
                     children: [
                       GestureDetector(
-                        onTap: () async {
-                          var result = await const CreateTaskModal().show();
-                          if (result == true) {
-                            getTasks();
-                          }
-                        },
+                        onTap: widget.controller.getTasks,
                         child: Container(
                           width: 30,
                           height: 30,
@@ -101,9 +160,10 @@ class _UnsignedTasksState extends State<UnsignedTasks>
                             data: task,
                             feedback: TaskWidget(task: task),
                             onDragStarted: () {
-                              widget.hideScreen();
+                              widget.controller
+                                  .hide(MediaQuery.of(context).size.height);
                               widget.listController.taskTime = task;
-                              widget.update();
+                              // widget.update();
                             },
                             onDragCompleted: () {
                               taskQueries
@@ -111,14 +171,15 @@ class _UnsignedTasksState extends State<UnsignedTasks>
                               widget.listController.taskTime = null;
                               widget.listController.refreshData.update();
                               widget.update();
-                              getTasks();
+                              widget.controller.getTasks();
                             },
                             onDraggableCanceled: (_, __) {
                               widget.listController.taskTime = null;
+                              widget.controller.show();
                               widget.update();
                             },
                             child:
-                                IntrinsicWidth(child: TaskWidget(task: task)),
+                                IntrinsicWidth(child: TaskWidget(task: task, expand: false,)),
                           )),
                     ],
                   ),
