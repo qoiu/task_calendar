@@ -21,7 +21,6 @@ class TaskWidget extends StatelessWidget {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if(applySize && task.id!=null) {
          task.taskKey.size()?.let((e){
-           [task.title, 'apply size'.dpGreen(), e.toString()].print();
            TaskWidget.sizes[task.id!] ??= e;
         });
       }
