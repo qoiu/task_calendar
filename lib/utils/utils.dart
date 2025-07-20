@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:intl/intl.dart';
 import 'package:qoiu_utils/navigation.dart';
+import 'package:task_calendar/l10n/app_localizations.dart' show AppLocalizations;
 import 'package:task_calendar/screens/lists/models/custom_data.dart';
 import 'package:task_calendar/themes.dart';
 
