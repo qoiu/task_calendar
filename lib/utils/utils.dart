@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:qoiu_utils/navigation.dart';
+import 'package:qoiu_utils/statefull_modal.dart';
 import 'package:task_calendar/l10n/app_localizations.dart' show AppLocalizations;
 import 'package:task_calendar/screens/lists/models/custom_data.dart';
 import 'package:task_calendar/themes.dart';
@@ -31,4 +32,26 @@ DateTime? tryToGetTime(dynamic data) {
   if (data is UiTime) return data.time;
   if (data is UiTask) return data.task.start;
   return null;
+}
+
+extension FromList on dynamic{
+  lastOf(List list)=> list.last == this;
+  firstOf(List list)=> list.first == this;
+}
+
+extension IndexedList<T> on List<T>{
+  List<R> indexedMap<R>(R Function(int index,T data) mapper)=>indexed.map((e)=>mapper(e.$1,e.$2)).toList();
+}
+
+extension StatModalExt on StatefulModal{
+
+  Future<T?> showCenter<T>({BuildContext? context}) {
+    return showDialog(
+        context: context??rootNavigatorKey.currentContext!,
+        // backgroundColor: Colors.transparent,
+        useSafeArea: useSafeArea,
+        // isScrollControlled: isScrolled,
+        builder: (context) => this,
+        routeSettings: RouteSettings(name: tag));
+  }
 }

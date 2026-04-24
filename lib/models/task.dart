@@ -2,6 +2,9 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:qoiu_utils/qoiu_utills.dart';
+import 'package:task_calendar/database/log_queries.dart';
+import 'package:task_calendar/database/task_queries.dart';
+import 'package:task_calendar/models/calendar_log.dart';
 import 'package:task_calendar/models/task_property.dart';
 import 'package:task_calendar/themes.dart';
 import 'package:task_calendar/utils/utils.dart';
@@ -36,6 +39,20 @@ class Task {
   String get time =>
       start?.let((e) => formatTime.format(e).padLeft(5, '0')) ?? '';
 
+
+  addProperty(String type){
+    if(properties.where((e)=>e.type==type).isEmpty){
+      'isEmpty'.dpRed().print();
+      TaskProperty.newObject(type)?.let((e)=>properties.add(e));
+    }
+  }
+
+  T? getProperty<T>(){
+    return properties.whereType<T>().firstOrNull;
+  }
+
+  SubtaskListTaskProperty? getSubtasks()=>getProperty<SubtaskListTaskProperty>();
+
   // : '${formatTime.format(start).padLeft(5, '0')} - ${formatTime.format(end!).padLeft(5, '0')}';
 
   Task(
@@ -47,6 +64,7 @@ class Task {
       this.complete = false,
       this.properties = const []}) {
     updateColors();
+    properties = [];
   }
 
   Task.fromJson(Map<String, dynamic> json)
@@ -90,6 +108,15 @@ class Task {
           .parse(json['date'])
           .copyWith(hour: time.hour, minute: time.minute);
       updateColors();
+    }
+  }
+
+  updateStatus(){
+    var now = DateTime.now().millisecondsSinceEpoch;
+    if(!complete && (start?.copyWith(hour: 23, minute: 59).millisecondsSinceEpoch??now)<now){
+      start = null;
+      logQueries.add(CalendarLog('Вы не выполнили задачу($title) - задача возвращена в общие задачи'));
+      taskQueries.update(this);
     }
   }
 

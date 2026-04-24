@@ -1,18 +1,18 @@
 import 'package:qoiu_utils/qoiu_utills.dart';
 import 'package:qoiu_utils/typedef.dart';
+import 'package:task_calendar/models/skill.dart';
 import 'package:task_calendar/models/task.dart';
 
-part 'package:task_calendar/models/task_properties/repeatable.dart';
-part 'package:task_calendar/models/task_properties/ghost.dart';
-part 'package:task_calendar/models/task_properties/subtask_list_property.dart';
+// part 'package:task_calendar/models/task_properties/ghost.dart';
+part 'package:task_calendar/models/skill_properties/skill_statistic.dart';
+// part 'package:task_calendar/models/task_properties/subtask_list_property.dart';
 
-sealed class TaskProperty {
-  static final Map<String, TaskPropertyBuilder> allSubtypes = {
-    RepeatableTask._type : RepeatableTaskBuilder(),
-    SubtaskListTaskProperty._type : SubtaskListTaskBuilder(),
+sealed class SkillProperty {
+  static final Map<String, SkillPropertyBuilder> allSubtypes = {
+    'statistic': StatisticSkillBuilder()
   };
 
-  static TaskProperty? fromJson(JsonMap json) {
+  static SkillProperty? fromJson(JsonMap json) {
     'type: $json'.print();
     var type =
         allSubtypes.entries.where((e) => e.key == json['type']).firstOrNull;
@@ -21,7 +21,7 @@ sealed class TaskProperty {
     return type.value.buildJson(json);
   }
 
-  static TaskProperty? newObject(String type) {
+  static SkillProperty? newObject(String type) {
     'newObject($type)'.print();
     'newObject(${allSubtypes[type]})'.print();
     return allSubtypes[type]?.buildNew();
@@ -32,14 +32,14 @@ sealed class TaskProperty {
   String get type;
 }
 
-extension OnTaskProperty on Task{
+extension OnSkillProperty on SkillData{
   T? typeProperty<T>(){
     return properties.whereType<T>().firstOrNull;
   }
 
 }
 
-abstract class TaskPropertyBuilder{
-  TaskProperty buildJson(JsonMap map);
-  TaskProperty buildNew();
+abstract class SkillPropertyBuilder{
+  SkillProperty buildJson(JsonMap map);
+  SkillProperty buildNew();
 }

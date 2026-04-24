@@ -15,7 +15,7 @@ dependencies:
   flutter_svg: any
   sqflite: ^2.3.3+1
   infinite_scroll_pagination: any
-  app_tutorial: ^1.0.6
+  smooth_page_indicator: ^1.2.1
 
   qoiu_utils:
     git:

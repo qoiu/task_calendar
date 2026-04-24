@@ -105,9 +105,9 @@ class TaskCompleteWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: TaskWidget.taskSize(task)?.width,
-      height: TaskWidget.taskSize(task)?.height,
+    return TaskWidget.taskSize(task)?.let((size)=>Container(
+      width: size.width,
+      height: size.height,
       decoration: BoxDecoration(
           color: task.complete ? task.taskColor : Colors.yellow.withAlpha(100),
           borderRadius: BorderRadius.circular(50)),
@@ -129,7 +129,7 @@ class TaskCompleteWidget extends StatelessWidget {
                       color: Colors.orange
                     ),
               Expanded(
-                child: TextBuilder((task.complete ? "Восстановить" : "Выполнить") + TaskWidget.taskSize(task).toString())
+                child: TextBuilder((task.complete ? "Восстановить" : "Выполнить"))
                     .color(task.complete
                         ? task.taskColor.oppositeColor()
                         : Colors.orange)
@@ -139,6 +139,6 @@ class TaskCompleteWidget extends StatelessWidget {
           ),
         ),
       ),
-    );
+    ))??Container();
   }
 }

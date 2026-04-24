@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:qoiu_utils/components/common_text_builder.dart';
 import 'package:qoiu_utils/qoiu_utills.dart';
+import 'package:task_calendar/components/cloud_button.dart';
 import 'package:task_calendar/components/task_widget.dart';
 import 'package:task_calendar/database/task_queries.dart';
 import 'package:task_calendar/modals/accept_modal.dart';
@@ -48,20 +49,18 @@ class _ListTimeItemState extends State<ListTimeItem> {
                   : (widget.listController.selected ? Colors.red : Colors.green)
                       .withValues(alpha: 0.1),
               child: child),
-          onWillAcceptWithDetails: (c) {
-            'onWillAcceptWithDetails'.print();
-            return true;
-          },
+          onWillAcceptWithDetails: (c) =>true,
           onMove: (v) {
+            if (widget.task?.let((e) => TaskWidget.taskSize(e)) == null) {
+              setState(() {});
+            }
             if (widget.listController.taskTime
                     ?.let((e) => e.isTime(widget.time)) ??
-                true) return;
-            'updateTime: ${widget.time}'.print();
+                true) {
+              return;
+            }
             widget.listController.taskTime!.start =
                 formatDateTime.parse('${widget.date} ${widget.time}');
-            'updateTime: ${widget.listController.taskTime!.start}'
-                .dpGreen()
-                .print();
             widget.updateScreen();
           },
           onLeave: (a) {
@@ -76,6 +75,7 @@ class _ListTimeItemState extends State<ListTimeItem> {
       children: [
         draggable(
           child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Padding(
                   padding:
@@ -84,7 +84,7 @@ class _ListTimeItemState extends State<ListTimeItem> {
               const SizedBox(width: 10),
               widget.task?.let((task) => Expanded(
                           child: Padding(
-                        padding: EdgeInsets.symmetric(vertical: 2)
+                        padding: const EdgeInsets.symmetric(vertical: 2)
                             .copyWith(right: 10),
                         child: Stack(
                           children: [
@@ -93,64 +93,23 @@ class _ListTimeItemState extends State<ListTimeItem> {
                             } else ...{
                               TaskCompleteWidget(task),
                             },
-                            Dismissible(
-                              key: Key(task.toDb().toString()),
-                              onDismissed: (v) async {
-                                await taskQueries.deleteTask(task.id!);
-                                widget.refreshDay();
-                              },
-                              confirmDismiss: (v) async {
-                                if (!delete) {
-                                  task.complete = !task.complete;
-                                  await taskQueries.update(task);
-                                  widget.refreshDay();
-                                } else {
-                                  var result = await AcceptModal(
-                                          title: 'Удалить задачу ${task.title}')
-                                      .show();
-                                  return result == true;
-                                }
-                              },
-                              onUpdate: (details) {
-                                 if (delete !=
-                                    (details.direction ==
-                                        DismissDirection.endToStart)) {
-                                  setState(() {
-                                    delete = details.direction ==
-                                        DismissDirection.endToStart;
-                                  });
-                                }
-                              },
-                              child: LongPressDraggable(
-                                feedback: Transform.scale(
-                                  scale: 1,
-                                  child: Opacity(
-                                      opacity: 0.6,
-                                      child: TaskWidget(task: task)),
-                                ),
-                                data: task,
-                                onDragStarted: () {
-                                  widget.listController.taskTime =
-                                      task.copyWith();
-                                  widget.updateScreen();
-                                },
-                                onDragUpdate: (details) {
-                                  // ['delete', details.localPosition.dx].print();
-                                  delete = details.localPosition.dx > 0;
-                                },
-                                onDragCompleted: () async {
-                                  await taskQueries
-                                      .update(widget.listController.taskTime!);
-                                  widget.listController.taskTime = null;
-                                  widget.refreshDay();
-                                },
-                                onDraggableCanceled: (_, __) {
-                                  widget.listController.taskTime = null;
-                                  widget.updateScreen();
-                                },
-                                child: TaskWidget(task: task, applySize: true,),
-                              ),
-                            ),
+                            task.getSubtasks()?.let((subtask) => Column(
+                                      spacing: 10,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            GestureDetector(child: Icon(Icons.arrow_drop_down), onTap: (){
+                                              // subtask.type
+                                              setState(() {});
+                                            },),
+                                            dismissibleTask(task),
+                                          ],
+                                        ),
+                                        ...subtask.subtasks.map((e) =>
+                                            CloudButton(e.title, onTap: () {}))
+                                      ],
+                                    )) ??
+                                dismissibleTask(task),
                           ],
                         ),
                       ))) ??
@@ -169,6 +128,68 @@ class _ListTimeItemState extends State<ListTimeItem> {
           height: 1,
         )
       ],
+    );
+  }
+
+  Dismissible dismissibleTask(Task task) {
+    return Dismissible(
+      key: Key(task.toDb().toString()),
+      onDismissed: (v) async {
+        await taskQueries.deleteTask(task.id!);
+        widget.refreshDay();
+      },
+      confirmDismiss: (v) async {
+        if (!delete) {
+          task.complete = !task.complete;
+          await taskQueries.update(task);
+          TaskWidget.sizes.remove(task.id!);
+          widget.refreshDay();
+          return false;
+        } else {
+          var result =
+              await AcceptModal(title: 'Удалить задачу ${task.title}').show();
+          return result == true;
+        }
+      },
+      onUpdate: (details) {
+        if (!TaskWidget.sizes.containsKey(task.id)) {
+          'no size'.print();
+          widget.refreshDay();
+        }
+        if (delete != (details.direction == DismissDirection.endToStart)) {
+          setState(() {
+            delete = details.direction == DismissDirection.endToStart;
+          });
+        }
+      },
+      child: LongPressDraggable(
+        feedback: Transform.scale(
+          scale: 1,
+          child: Opacity(opacity: 0.6, child: TaskWidget(task: task)),
+        ),
+        data: task,
+        onDragStarted: () {
+          widget.listController.taskTime = task.copyWith();
+          widget.updateScreen();
+        },
+        onDragUpdate: (details) {
+          // ['delete', details.localPosition.dx].print();
+          delete = details.localPosition.dx > 0;
+        },
+        onDragCompleted: () async {
+          await taskQueries.update(widget.listController.taskTime!);
+          widget.listController.taskTime = null;
+          widget.refreshDay();
+        },
+        onDraggableCanceled: (_, __) {
+          widget.listController.taskTime = null;
+          widget.updateScreen();
+        },
+        child: TaskWidget(
+          task: task,
+          applySize: true,
+        ),
+      ),
     );
   }
 }

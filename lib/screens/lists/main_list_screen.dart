@@ -1,4 +1,3 @@
-import 'package:app_tutorial/app_tutorial.dart';
 import 'package:flutter/material.dart';
 import 'package:qoiu_utils/qoiu_utills.dart';
 import 'package:task_calendar/screens/lists/components/list_date_time_item.dart';
@@ -14,8 +13,8 @@ class MainListScreen extends StatefulWidget {
 }
 
 class _MainListScreenState extends State<MainListScreen> {
-  ScrollController _scrollController = ScrollController();
-  List<int> _items = List.generate(20, (i) => i); // начальные данные
+  final ScrollController _scrollController = ScrollController();
+  final List<int> _items = List.generate(20, (i) => i);
   bool _isLoadingTop = false;
   bool _isLoadingBottom = false;
   bool showPlans = false;
@@ -29,25 +28,6 @@ class _MainListScreenState extends State<MainListScreen> {
     super.initState();
     _scrollController.addListener(_onScroll);
     WidgetsBinding.instance.addPostFrameCallback((_)async{
-
-      await Future.delayed(Duration(seconds: 1));
-      setState(() {});
-      Tutorial.showTutorial(context, [
-        TutorialItem(
-          globalKey: addKey,
-          shapeFocus: ShapeFocus.roundedSquare,
-          borderRadius: const Radius.circular(150.0),
-          child: Container(
-            color: Colors.red,
-            width: double.maxFinite,
-            height: addKey.renderBox()?.localToGlobal(Offset.zero).dy??20,
-            // title: 'Counter text',
-            // content: 'This is the text that displays the status of the counter',
-          ),
-        ),], onTutorialComplete: () {
-        'complete'.print();
-        print('Tutorial is complete!');
-      });
     });
   }
 
@@ -71,7 +51,6 @@ class _MainListScreenState extends State<MainListScreen> {
     if (_isLoadingTop) return;
     _isLoadingTop = true;
 
-    // Запоминаем позицию до добавления новых элементов
     final scrollOffsetBefore = _scrollController.offset;
     final scrollSize = _scrollController.position.maxScrollExtent;
 
@@ -81,7 +60,6 @@ class _MainListScreenState extends State<MainListScreen> {
 
     setState(() {});
 
-    // Отложенный скролл, чтобы сохранить позицию
     WidgetsBinding.instance.addPostFrameCallback((_) {
       var max = _scrollController.position.maxScrollExtent;
       var jumpTo = scrollOffsetBefore + (max - scrollSize);
@@ -107,18 +85,16 @@ class _MainListScreenState extends State<MainListScreen> {
     return SafeArea(
       child: Stack(
         children: [
-          Container(
-            child: ListView(
-              controller: _scrollController,
-              children: _items.map((i) {
-                return ListDateTimeItem(
-                  formatDate.format(DateTime.now().add(Duration(days: i))),
-                  listController: listController,
-                  update: () => setState(() {}),
-                  key: Key('dayOffset_$i}'),
-                );
-              }).toList(),
-            ),
+          ListView(
+            controller: _scrollController,
+            children: _items.map((i) {
+              return ListDateTimeItem(
+                formatDate.format(DateTime.now().add(Duration(days: i))),
+                listController: listController,
+                update: () => setState(() {}),
+                key: Key('dayOffset_$i}'),
+              );
+            }).toList(),
           ),
           UnsignedTasks(
               update: () => setState(() {}),
@@ -127,7 +103,7 @@ class _MainListScreenState extends State<MainListScreen> {
           Container(
               alignment: Alignment.bottomRight,
               padding: const EdgeInsets.all(30),
-              child: Container(
+              child: SizedBox(
                 width: 50,
                 height: 50,
                 key: addKey,
@@ -141,7 +117,7 @@ class _MainListScreenState extends State<MainListScreen> {
                     }
                   },
                   shape: const CircleBorder(),
-                  child: Icon(
+                  child: const Icon(
                     Icons.add,
                     color: Colors.white,
                   ),

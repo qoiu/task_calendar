@@ -3,7 +3,7 @@ import 'package:qoiu_utils/components/common_text_builder.dart';
 import 'package:qoiu_utils/qoiu_utills.dart';
 import 'package:task_calendar/components/task_widget.dart';
 import 'package:task_calendar/database/task_queries.dart';
-import 'package:task_calendar/modals/create_task_modal.dart';
+import 'package:task_calendar/modals/create_task/create_task_modal.dart';
 import 'package:task_calendar/models/task.dart';
 import 'package:task_calendar/screens/lists/components/main_list_controller.dart';
 import 'package:task_calendar/screens/lists/components/update_inherited.dart';
@@ -46,6 +46,7 @@ class UnsignedTasksController {
 
 
   getTasks() async {
+    await taskQueries.checkOldTasks();
     tasks = await taskQueries.getTasksUnsigned();
     tasks.insert(0, Task(title: 'test'));
     updateDataController.update();

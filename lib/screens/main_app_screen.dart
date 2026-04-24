@@ -4,7 +4,9 @@ import 'package:flutter_svg/svg.dart';
 import 'package:qoiu_utils/qoiu_utills.dart';
 import 'package:task_calendar/database/tasks_database.dart';
 import 'package:task_calendar/screens/lists/main_list_screen.dart';
+import 'package:task_calendar/screens/log_list.dart';
 import 'package:task_calendar/screens/menu/menu_page.dart';
+import 'package:task_calendar/screens/skills/skills_list.dart';
 import 'package:task_calendar/screens/stub_screen.dart';
 import 'package:task_calendar/utils/enum/screen_tag.dart';
 import 'package:task_calendar/utils/utils.dart';
@@ -41,16 +43,22 @@ class _MainAppPage extends State<MainAppPage> {
           index: 0),
       TabItem(
           icon: "assets/svg/menu_calendar.svg",
-          title: () => getString().menu_calendar,
+          title: () => 'Навыки',
           tag: ScreenTag.MAIN_CALENDAR.name,
-          screenBuilder: (context) => StubScreen(getString().menu_calendar),
+          screenBuilder: (context) => const SkillsList(),
           index: 1),
+      TabItem(
+          icon: "assets/svg/menu_calendar.svg",
+          title: () => 'Логи',
+          tag: ScreenTag.MAIN_CALENDAR.name,
+          screenBuilder: (context) => LogList(),
+          index: 2),
       TabItem(
           icon: "assets/svg/menu_settings.svg",
           title: () => getString().menu_settings,
           tag: ScreenTag.MAIN_SETTINGS.name,
           screenBuilder: (context) => const MenuPage(),
-          index: 2),
+          index: 3),
     ];
   }
 

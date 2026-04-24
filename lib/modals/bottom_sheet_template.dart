@@ -40,10 +40,10 @@ class BottomSheetTemplate extends StatelessWidget {
         FocusManager.instance.primaryFocus?.unfocus();
       },
       child: Container(
-        padding: EdgeInsets.only(
-            top: MediaQuery.of(rootNavigatorKey.currentContext!)
-                .viewPadding
-                .top),
+        // padding: EdgeInsets.only(
+        //     top: MediaQuery.of(rootNavigatorKey.currentContext!)
+        //         .viewPadding
+        //         .top),
         child: Container(
           decoration: BoxDecoration(
               borderRadius: borderRadius,

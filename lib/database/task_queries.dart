@@ -26,6 +26,17 @@ TaskQueries taskQueries = TaskQueries();
      return result;
    }
 
+   Future<List<Task>> checkOldTasks()async{
+     var response = await tasksDatabase.database.rawQuery(
+         "SELECT*FROM tasks  WHERE date IS NOT NULL AND complete IS 0");
+     'result: $response'.print();
+     var result = response.map((e) {
+       return Task.fromDB(e);
+     }).toList();
+     result.forEach((e){e.updateStatus();});
+     return result;
+   }
+
   Future add(Task task)async {
      'add task: ${task.toDb()}'.print();
      tasksDatabase.database.insert('tasks', task.toDb());

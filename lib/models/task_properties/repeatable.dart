@@ -1,6 +1,15 @@
 
 part of 'package:task_calendar/models/task_property.dart';
 
+class RepeatableTaskBuilder extends TaskPropertyBuilder{
+  @override
+  TaskProperty buildJson(JsonMap map)=>RepeatableTask.fromJson(map);
+
+  @override
+  TaskProperty buildNew() => RepeatableTask();
+
+}
+
 class RepeatableTask extends TaskProperty {
 
   int? repeatAfter;
