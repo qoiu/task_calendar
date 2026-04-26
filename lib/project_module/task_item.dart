@@ -7,7 +7,7 @@ import 'material_icons.dart';
 import 'models/task_data.dart';
 
 class TaskItem extends StatefulWidget {
-  final TaskData item;
+  final ProjectTaskData item;
   final double? size;
   final Offset Function(DragUpdateDetails)? onPanUpdate;
 

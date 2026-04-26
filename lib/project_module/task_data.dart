@@ -2,7 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
 import 'package:qoiu_utils/qoiu_utils.dart';
-import 'package:task_calendar/project_module/task_main_theme.dart';
+import 'package:task_calendar/project_module/project_main_theme.dart';
 
 class TaskData {
   final int id;
@@ -23,7 +23,7 @@ class TaskData {
   Color get statusColor {
     switch(status){
       case TaskStatus.unknown: return getColorScheme().outline;
-      case TaskStatus.inProcess: return TaskMainTheme.progress;
+      case TaskStatus.inProcess: return ProjectMainTheme.progress;
       case TaskStatus.success: return getColorScheme().primary;
       case TaskStatus.failed: return getColorScheme().error;
     }

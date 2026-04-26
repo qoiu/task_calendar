@@ -2,13 +2,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-class TaskMainTheme {
-  static const Color _mainColor = Color(0xFF41FF00);
+class ProjectMainTheme {
+  static const Color mainColor = Color(0xFF41FF00);
   static const Color surface = Color(0xFF070029);
   static const Color _inversePrimary = Color(0xFFF5F5F5);
   static const Color _grey = Color(0xFF8F8F8F);
   static const Color _greyLight = Color(0xFFE2E2E4);
-  static const Color _black = _mainColor;
+  static const Color _black = mainColor;
   static const Color _error = Color(0xFFCE594F);
   static const Color errorContainer = Color(0xFFF2DADA);
   static const Color successContainer = Color(0xFFEFFFED);
@@ -62,19 +62,19 @@ class TaskMainTheme {
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.all(Radius.circular(10)),
-        borderSide: BorderSide(color: _mainColor, width: 1),
+        borderSide: BorderSide(color: mainColor, width: 1),
       ),
       errorBorder: OutlineInputBorder(
         borderRadius: BorderRadius.all(Radius.circular(10)),
-        borderSide: BorderSide(color: _mainColor, width: 1),
+        borderSide: BorderSide(color: mainColor, width: 1),
       ),
       focusedErrorBorder: OutlineInputBorder(
         borderRadius: BorderRadius.all(Radius.circular(10)),
-        borderSide: BorderSide(color: _mainColor, width: 1),
+        borderSide: BorderSide(color: mainColor, width: 1),
       ),
     ),
     colorScheme: ColorScheme.light(
-      primary: _mainColor,
+      primary: mainColor,
       inversePrimary: _inversePrimary,
       primaryContainer: _primaryContainer,
       onPrimary: surface,
@@ -92,7 +92,7 @@ class TaskMainTheme {
     textSelectionTheme: TextSelectionThemeData(
       cursorColor: _black,
       selectionColor: _greyLight.withAlpha(100),
-      selectionHandleColor: _mainColor,
+      selectionHandleColor: mainColor,
     ),textTheme: const TextTheme(
     headlineSmall: TextStyle(
       fontFamily: _fontRobotoMain,

@@ -7,7 +7,7 @@ import '../models/task_data.dart';
 import '../task_container.dart';
 
 class TaskItem extends StatefulWidget {
-  final TaskData item;
+  final ProjectTaskData item;
   final double? size;
   final Offset Function(DragUpdateDetails)? onPanUpdate;
 
@@ -76,6 +76,7 @@ class _TaskItemState extends State<TaskItem> {
               ),
             ),
           ),
+          Text(widget.item.offset.toString(), style: getTextStyle().bodyMedium?.copyWith(fontSize: 5),),
           canEdit
               ? Expanded(
                   child: FittedBox(

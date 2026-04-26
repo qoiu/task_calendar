@@ -34,7 +34,7 @@ class _TaskBoardState extends State<TaskBoard> {
     color: getColorScheme().outline,
     yPos: 0,
   );
-  List<TaskData> tasks = [];
+  List<ProjectTaskData> tasks = [];
   List<DividerData> dividers = [
     DividerData(
       id: 1,
@@ -44,18 +44,22 @@ class _TaskBoardState extends State<TaskBoard> {
     ),
   ];
   double scale = 1;
-  Offset offset = Offset.zero;
+  Offset _offset = Offset.zero;
+
+  Offset get offset => _offset;
+
+  set offset(Offset value) {
+    _offset = Offset(min(0, value.dx), min(20, value.dy));
+  }
+
   final iconSize = TaskBoard.iconSize;
 
   double _previousScale = 1.0;
+
   Widget logicWrapper({required Widget child}) {
     return Listener(
       onPointerDown: (e) {
         FocusScope.of(context).unfocus();
-      },
-      onPointerPanZoomStart: (e){
-        logs[3]='zoom';
-        setState(() {});
       },
       onPointerSignal: (pointerSignal) {
         if (pointerSignal is PointerScrollEvent) {
@@ -67,36 +71,25 @@ class _TaskBoardState extends State<TaskBoard> {
         }
       },
       child: GestureDetector(
-        // onPanUpdate: (details) {
-        //   setState(() {
-        //     offset += details.delta;
-        //   });
-        // },
-        onScaleStart: (d){
-          _previousScale = scale;
+        onScaleStart: (d) {
+          _previousScale = 1;
         },
         onScaleUpdate: (details) {
-          logs[4] = '${details.pointerCount}';
-        if (details.pointerCount > 1) {
-          setState(() {
-            double deltaScale = 1- details.scale / _previousScale;
-            logs[3] = 'zoom + ${deltaScale}';
-            _previousScale = details.scale;
-            scale = (scale+deltaScale).clamp(0.2, 4.0);
-          });
-        } else {
-          logs[3] = 'pan';
-          setState(() {
-            offset += details.focalPointDelta*scale;
-          });
-        }
-      },
-        // onScaleUpdate: (e){
-        //   logs[3] = e.scale.toString();
-        //   setState(() {
-        //     scale = (e.scale).clamp(0.2, 4.0);
-        //   });
-        // },
+          // logs[4] = '${details.pointerCount}';
+          if (details.pointerCount > 1) {
+            setState(() {
+              double deltaScale = 1 - details.scale / _previousScale;
+              // logs[3] = 'zoom + $deltaScale';
+              scale = (scale + deltaScale * -1).clamp(0.2, 4.0);
+              _previousScale = details.scale;
+            });
+          } else {
+            // logs[3] = 'pan';
+            setState(() {
+              offset += details.focalPointDelta / scale;
+            });
+          }
+        },
         child: Container(color: Colors.transparent, child: child),
       ),
     );
@@ -104,7 +97,7 @@ class _TaskBoardState extends State<TaskBoard> {
 
   int dividerOnPan(DividerData item, e) {
     setState(() {
-      double area = TaskBoard.iconSize * 2 / scale;
+      double area = TaskBoard.iconSize * 2;
       int cPosition = (e.globalPosition.dy / scale - offset.dy).toInt();
 
       var others = dividers.where((d) => d.id != item.id).toList()
@@ -136,8 +129,6 @@ class _TaskBoardState extends State<TaskBoard> {
             }
           }
         }
-
-        // Проверяем место ПОСЛЕ самого последнего элемента
         int bottomY = (others.last.yPos + area).toInt();
         if ((cPosition - bottomY).abs() < minDelta) {
           bestY = bottomY;
@@ -151,7 +142,7 @@ class _TaskBoardState extends State<TaskBoard> {
     return item.yPos;
   }
 
-  Offset taskOnPan(DragUpdateDetails details, [TaskData? item]) {
+  Offset taskOnPan(DragUpdateDetails details, [ProjectTaskData? item]) {
     var globalPos = details.globalPosition;
     Offset cPosition = Offset(
         globalPos.dx / scale - offset.dx, globalPos.dy / scale - offset.dy);
@@ -173,10 +164,30 @@ class _TaskBoardState extends State<TaskBoard> {
     return Offset(snappedX ?? cPosition.dx, snappedY ?? cPosition.dy);
   }
 
+  bool isTaskVisible({
+    required Offset taskPosition, // Исходная позиция задачи (x, y)
+    required Size screenSize,      // Размер экрана (MediaQuery.of(context).size)
+  }) {
+    final double margin = iconSize;
+    double screenX = (taskPosition.dx) + offset.dx;
+    double screenY = (taskPosition.dy) + offset.dy;
+
+    var rightBorder = screenSize.width/scale;
+    bool isWithinHorizontal = screenX  > -margin &&
+        screenX < rightBorder;
+
+    bool isWithinVertical = screenY > -margin &&
+        screenY < screenSize.height/scale -30;//30 - bottomBar
+
+    return isWithinHorizontal && isWithinVertical;
+  }
+
   @override
   Widget build(BuildContext context) {
     logs[0] = '$offset';
     logs[1] = 'scale: $scale';
+    var screen = MediaQuery.sizeOf(context);
+    var visibleTasks = tasks.where((e)=>isTaskVisible(taskPosition: e.offset, screenSize: screen)).toList();
     return logicWrapper(
       child: Stack(
         children: [
@@ -200,7 +211,7 @@ class _TaskBoardState extends State<TaskBoard> {
               ),
             ),
           ),
-          ...tasks.map(
+          ...visibleTasks.map(
             (item) => Positioned(
               left: (item.offset.dx + offset.dx) * scale,
               top: (item.offset.dy + offset.dy) * scale,
@@ -210,8 +221,6 @@ class _TaskBoardState extends State<TaskBoard> {
                 onPanUpdate: (e) {
                   var offset = taskOnPan(e, item);
                   setState(() {
-                    // var iconSize = (TaskBoard.iconSize*scale);
-                    // item.offset = offset/scale-this.offset*scale+Offset(iconSize,iconSize);
                     item.offset = offset;
                   });
                   return offset;
@@ -228,9 +237,19 @@ class _TaskBoardState extends State<TaskBoard> {
               color: getColorScheme().primary,
             ),
           ),
+          Positioned(
+            top: 270,
+            left: (screen.width*scale)-5,
+            // left: 50,
+            child: Container(
+              width: 5,
+              height: 5,
+              color: getColorScheme().primary,
+            ),
+          ),
           Container(
             alignment: Alignment.bottomRight,
-            padding: EdgeInsets.all(10),
+            padding: const EdgeInsets.all(10),
             child: TaskContainer(
               thin: 1,
               child: Column(
@@ -249,7 +268,7 @@ class _TaskBoardState extends State<TaskBoard> {
                             id: dividers.map((e) => e.id).reduce(max) + 1,
                             title: '',
                             color: getColorScheme().outline.withAlpha(0),
-                            yPos: (e.dy * scale).toInt(),
+                            yPos: (e.dy /scale).toInt(),
                           ),
                         );
                         dividers.sort((a, b) => a.yPos - b.yPos);
@@ -269,7 +288,7 @@ class _TaskBoardState extends State<TaskBoard> {
                     onDone: (e) {
                       setState(() {
                         tasks.add(
-                          TaskData(
+                          ProjectTaskData(
                             id: 1,
                             title: 'Новая задача',
                             offset: ((e) / scale) - offset,
@@ -301,7 +320,7 @@ class _TaskBoardState extends State<TaskBoard> {
                     onDone: (e) {
                       setState(() {
                         tasks.add(
-                          TaskData(
+                          ProjectTaskData(
                             id: 1,
                             title: 'Новый баг',
                             offset: (e / scale) - offset,
@@ -321,27 +340,10 @@ class _TaskBoardState extends State<TaskBoard> {
                       ),
                     ),
                   ),
-                  // const SizedBox(height: 10),
-                  // GestureDetector(
-                  //   onTap: () => MaterialIcons.navigate(context),
-                  //   child: TaskContainer(
-                  //     padding: EdgeInsets.zero,
-                  //     size: iconSize * scale * 0.8,
-                  //     color: getColorScheme().error,
-                  //     child: Icon(Icons.add, color: getColorScheme().primary),
-                  //   ),
-                  // ),
                 ],
               ),
             ),
           ),
-          // Positioned(
-          //   top: offset.dy,
-          //   child: Container(
-          //     width: MediaQuery.widthOf(context),
-          //     child: MaterialIcons.draw(),
-          //   ),
-          // ),
         ],
       ),
     );

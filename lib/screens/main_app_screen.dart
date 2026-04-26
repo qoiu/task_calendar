@@ -6,7 +6,8 @@ import 'package:qoiu_utils/navigation.dart';
 import 'package:qoiu_utils/qoiu_utils.dart';
 import 'package:task_calendar/database/tasks_database.dart';
 import 'package:task_calendar/project_module/task_board.dart';
-import 'package:task_calendar/project_module/task_main_theme.dart';
+import 'package:task_calendar/project_module/project_main_theme.dart';
+import 'package:task_calendar/project_module/task_loader_screen.dart';
 import 'package:task_calendar/screens/lists/main_list_screen.dart';
 import 'package:task_calendar/screens/log_list.dart';
 import 'package:task_calendar/screens/menu/menu_page.dart';
@@ -61,7 +62,7 @@ class _MainAppPage extends State<MainAppPage> {
           icon: "assets/svg/menu_calendar.svg",
           title: () => 'Проекты',
           tag: ScreenTag.MAIN_CALENDAR.name,
-          screenBuilder: (context) => TaskBoard(),
+          screenBuilder: (context) => TaskLoaderScreen(),
           index: 3),
       TabItem(
           icon: "assets/svg/menu_settings.svg",
@@ -116,7 +117,7 @@ class _MainAppPage extends State<MainAppPage> {
         ),
         child: Scaffold(
           resizeToAvoidBottomInset: true,
-          backgroundColor: TaskMainTheme.surface,
+          backgroundColor: ProjectMainTheme.surface,
           bottomNavigationBar: Container(
               // Добавляем границу сверху
               decoration: BoxDecoration(
@@ -148,7 +149,7 @@ class _MainAppPage extends State<MainAppPage> {
                 unselectedFontSize: 11,
                 selectedFontSize: 11,
                 elevation: 2,
-                backgroundColor: TaskMainTheme.surface,
+                backgroundColor: ProjectMainTheme.surface,
                 showUnselectedLabels: true,
                 type: BottomNavigationBarType.fixed,
               )),
