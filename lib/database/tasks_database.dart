@@ -1,5 +1,5 @@
 import 'package:flutter/foundation.dart';
-import 'package:qoiu_utils/qoiu_utills.dart';
+import 'package:qoiu_utils/qoiu_utils.dart';
 import 'package:sqflite/sqflite.dart';
 
 TasksDatabase tasksDatabase = TasksDatabase();

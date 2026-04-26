@@ -1,5 +1,5 @@
 
-import 'package:qoiu_utils/qoiu_utills.dart';
+import 'package:qoiu_utils/qoiu_utils.dart';
 import 'package:task_calendar/database/tasks_database.dart';
 import 'package:task_calendar/models/skill.dart';
 import 'package:task_calendar/models/task.dart';

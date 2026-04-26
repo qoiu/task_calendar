@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:qoiu_utils/components/common_text_builder.dart';
 import 'package:qoiu_utils/navigation.dart';
-import 'package:qoiu_utils/qoiu_utills.dart';
+import 'package:qoiu_utils/qoiu_utils.dart';
 import 'package:qoiu_utils/statefull_modal.dart';
 import 'package:task_calendar/screens/lists/components/main_button.dart';
 

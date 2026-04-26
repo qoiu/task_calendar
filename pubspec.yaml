@@ -16,6 +16,9 @@ dependencies:
   sqflite: ^2.3.3+1
   infinite_scroll_pagination: any
   smooth_page_indicator: ^1.2.1
+  dotted_line: ^3.2.3
+  flutter_color_picker_plus: any
+  auto_size_text: ^3.0.0
 
   qoiu_utils:
     git:

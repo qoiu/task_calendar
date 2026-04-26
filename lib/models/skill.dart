@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:qoiu_utils/qoiu_utills.dart';
+import 'package:qoiu_utils/qoiu_utils.dart';
 import 'package:qoiu_utils/typedef.dart';
 import 'package:task_calendar/database/skill_queries.dart';
 import 'package:task_calendar/models/calendar_log.dart';

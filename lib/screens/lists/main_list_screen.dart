@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:qoiu_utils/qoiu_utills.dart';
+import 'package:qoiu_utils/qoiu_utils.dart';
 import 'package:task_calendar/screens/lists/components/list_date_time_item.dart';
 import 'package:task_calendar/screens/lists/components/main_list_controller.dart';
 import 'package:task_calendar/screens/lists/unsigned_tasks.dart';
@@ -82,49 +82,47 @@ class _MainListScreenState extends State<MainListScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Stack(
-        children: [
-          ListView(
-            controller: _scrollController,
-            children: _items.map((i) {
-              return ListDateTimeItem(
-                formatDate.format(DateTime.now().add(Duration(days: i))),
-                listController: listController,
-                update: () => setState(() {}),
-                key: Key('dayOffset_$i}'),
-              );
-            }).toList(),
-          ),
-          UnsignedTasks(
+    return Stack(
+      children: [
+        ListView(
+          controller: _scrollController,
+          children: _items.map((i) {
+            return ListDateTimeItem(
+              formatDate.format(DateTime.now().add(Duration(days: i))),
+              listController: listController,
               update: () => setState(() {}),
-              controller: unsignedTasksController,
-              listController: listController),
-          Container(
-              alignment: Alignment.bottomRight,
-              padding: const EdgeInsets.all(30),
-              child: SizedBox(
-                width: 50,
-                height: 50,
-                key: addKey,
-                child: FloatingActionButton(
-                  onPressed: () {
-                    ['showPlan',unsignedTasksController.showPlan].print();
-                    if(!unsignedTasksController.showPlan){
-                      unsignedTasksController.show();
-                    }else{
-                      unsignedTasksController.createTask();
-                    }
-                  },
-                  shape: const CircleBorder(),
-                  child: const Icon(
-                    Icons.add,
-                    color: Colors.white,
-                  ),
+              key: Key('dayOffset_$i}'),
+            );
+          }).toList(),
+        ),
+        UnsignedTasks(
+            update: () => setState(() {}),
+            controller: unsignedTasksController,
+            listController: listController),
+        Container(
+            alignment: Alignment.bottomRight,
+            padding: const EdgeInsets.all(30),
+            child: SizedBox(
+              width: 50,
+              height: 50,
+              key: addKey,
+              child: FloatingActionButton(
+                onPressed: () {
+                  ['showPlan',unsignedTasksController.showPlan].print();
+                  if(!unsignedTasksController.showPlan){
+                    unsignedTasksController.show();
+                  }else{
+                    unsignedTasksController.createTask();
+                  }
+                },
+                shape: const CircleBorder(),
+                child: const Icon(
+                  Icons.add,
+                  color: Colors.white,
                 ),
-              )),
-        ],
-      ),
+              ),
+            )),
+      ],
     );
   }
 }

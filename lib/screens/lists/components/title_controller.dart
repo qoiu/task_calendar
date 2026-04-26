@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:qoiu_utils/qoiu_utills.dart';
+import 'package:qoiu_utils/qoiu_utils.dart';
 import 'package:task_calendar/components/task_widget.dart';
 import 'package:task_calendar/models/task.dart';
 import 'package:task_calendar/screens/lists/components/main_button.dart';

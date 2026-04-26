@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:qoiu_utils/components/common_text_builder.dart';
-import 'package:qoiu_utils/qoiu_utills.dart';
+import 'package:qoiu_utils/qoiu_utils.dart';
 import 'package:task_calendar/database/task_queries.dart';
 import 'package:task_calendar/models/task.dart';
 import 'package:task_calendar/screens/lists/components/list_date_item.dart';

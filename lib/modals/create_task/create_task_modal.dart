@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart' show Colors;
-import 'package:qoiu_utils/qoiu_utills.dart';
+import 'package:qoiu_utils/qoiu_utils.dart';
 import 'package:qoiu_utils/statefull_modal.dart';
 import 'package:qoiu_utils/typedef.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';

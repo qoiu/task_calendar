@@ -30,57 +30,56 @@ class _SkillsListState extends State<SkillsList> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-        child: Stack(
-          children: [
-            ListView(
-                  padding: EdgeInsets.all(20),
-                  children: skills
-              .indexedMap((index, skill) => [
-                if(index==0 || skill.daysLeft!=skills[index-1].daysLeft)...{
-                  TextBuilder('Осталось ${skill.daysLeft} дней').titleMedium().build(),
-                  const SizedBox(height: 3),
+    return Stack(
+      children: [
+        ListView(
+              padding: EdgeInsets.all(20),
+              children: skills
+          .indexedMap((index, skill) => [
+            if(index==0 || skill.daysLeft!=skills[index-1].daysLeft)...{
+              TextBuilder('Осталось ${skill.daysLeft} дней').titleMedium().build(),
+              const SizedBox(height: 3),
+            },
+                GestureDetector(
+                  onTap: ()async{
+                    var result = await SkillProgressModal(skill: skill).showCenter();
+                    if (result == true) {
+                      loadSkills();
+                    }
+                  },
+                  onDoubleTap: ()async{
+                    var result = await CreateSkillModal(skill: skill).show();
+                    if (result == true) {
+                      loadSkills();
+                    }
+                  },
+                    child: SkillItem(skill)),
+                const SizedBox(height: 6),
+              ])
+          .expand((e) => e)
+          .toList(),
+            ),
+        Container(
+            alignment: Alignment.bottomRight,
+            padding: const EdgeInsets.all(30),
+            child: SizedBox(
+              width: 50,
+              height: 50,
+              child: FloatingActionButton(
+                onPressed: () async{
+                  var result = await const CreateSkillModal().show();
+                  if (result == true) {
+                    loadSkills();
+                  }
                 },
-                    GestureDetector(
-                      onTap: ()async{
-                        var result = await SkillProgressModal(skill: skill).showCenter();
-                        if (result == true) {
-                          loadSkills();
-                        }
-                      },
-                      onDoubleTap: ()async{
-                        var result = await CreateSkillModal(skill: skill).show();
-                        if (result == true) {
-                          loadSkills();
-                        }
-                      },
-                        child: SkillItem(skill)),
-                    const SizedBox(height: 6),
-                  ])
-              .expand((e) => e)
-              .toList(),
+                shape: const CircleBorder(),
+                child: const Icon(
+                  Icons.add,
+                  color: Colors.white,
                 ),
-            Container(
-                alignment: Alignment.bottomRight,
-                padding: const EdgeInsets.all(30),
-                child: SizedBox(
-                  width: 50,
-                  height: 50,
-                  child: FloatingActionButton(
-                    onPressed: () async{
-                      var result = await const CreateSkillModal().show();
-                      if (result == true) {
-                        loadSkills();
-                      }
-                    },
-                    shape: const CircleBorder(),
-                    child: const Icon(
-                      Icons.add,
-                      color: Colors.white,
-                    ),
-                  ),
-                )),
-          ],
-        ));
+              ),
+            )),
+      ],
+    );
   }
 }

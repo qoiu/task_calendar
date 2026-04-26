@@ -2,7 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:qoiu_utils/components/common_text_builder.dart';
-import 'package:qoiu_utils/qoiu_utills.dart';
+import 'package:qoiu_utils/qoiu_utils.dart';
 import 'package:qoiu_utils/statefull_modal.dart';
 import 'package:task_calendar/database/skill_queries.dart';
 import 'package:task_calendar/models/skill.dart';

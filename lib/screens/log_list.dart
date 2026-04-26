@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:qoiu_utils/components/common_text_builder.dart';
-import 'package:qoiu_utils/qoiu_utills.dart';
+import 'package:qoiu_utils/qoiu_utils.dart';
 import 'package:task_calendar/database/log_queries.dart';
 import 'package:task_calendar/database/skill_queries.dart';
 import 'package:task_calendar/modals/create_skill/create_skill_modal.dart';
@@ -33,43 +33,42 @@ class _LogListState extends State<LogList> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-        child: Stack(
-      children: [
-        ListView(
-          padding: EdgeInsets.all(20),
-          children: logs
-              .indexedMap((index, log) => [
-                    Text(log.message),
-                    log.postDate?.let((e) => Text(formatDateTime.format(e),
-                            style: getTextStyle().bodySmall)) ??
-                        Container(),
-                    const SizedBox(height: 6),
-                  ])
-              .expand((e) => e)
-              .toList(),
-        ),
-        Container(
-            alignment: Alignment.bottomRight,
-            padding: const EdgeInsets.all(30),
-            child: SizedBox(
-              width: 50,
-              height: 50,
-              child: FloatingActionButton(
-                onPressed: () async {
-                  var result = await const CreateSkillModal().show();
-                  if (result == true) {
-                    loadSkills();
-                  }
-                },
-                shape: const CircleBorder(),
-                child: const Icon(
-                  Icons.add,
-                  color: Colors.white,
-                ),
-              ),
-            )),
-      ],
-    ));
+    return Stack(
+          children: [
+    ListView(
+      padding: EdgeInsets.all(20),
+      children: logs
+          .indexedMap((index, log) => [
+                Text(log.message),
+                log.postDate?.let((e) => Text(formatDateTime.format(e),
+                        style: getTextStyle().bodySmall)) ??
+                    Container(),
+                const SizedBox(height: 6),
+              ])
+          .expand((e) => e)
+          .toList(),
+    ),
+    Container(
+        alignment: Alignment.bottomRight,
+        padding: const EdgeInsets.all(30),
+        child: SizedBox(
+          width: 50,
+          height: 50,
+          child: FloatingActionButton(
+            onPressed: () async {
+              var result = await const CreateSkillModal().show();
+              if (result == true) {
+                loadSkills();
+              }
+            },
+            shape: const CircleBorder(),
+            child: const Icon(
+              Icons.add,
+              color: Colors.white,
+            ),
+          ),
+        )),
+          ],
+        );
   }
 }

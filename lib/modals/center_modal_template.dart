@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:qoiu_utils/components/common_text_builder.dart';
-import 'package:qoiu_utils/qoiu_utills.dart';
+import 'package:qoiu_utils/qoiu_utils.dart';
 
 class CenterModalTemplate extends StatelessWidget {
   final Widget child;
