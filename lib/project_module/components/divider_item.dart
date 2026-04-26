@@ -3,19 +3,24 @@ import 'package:flutter/material.dart';
 import 'package:flutter_color_picker_plus/flutter_color_picker_plus.dart';
 import 'package:qoiu_utils/qoiu_utils.dart';
 
-import '../divider_data.dart';
-import '../material_icons.dart';
+import '../database/project_database.dart';
+import '../material_icons/material_icons.dart';
+import '../models/divider_data.dart';
 
 class DividerItem extends StatefulWidget {
   final double scale;
   final DividerData item;
   final double height;
   final Function(DragUpdateDetails)? onPanUpdate;
+  final VoidCallback? onTap;
+  final VoidCallback? onSelect;
 
   const DividerItem({
     required this.item,
     required this.scale,
     required this.height,
+    this.onSelect,
+    this.onTap,
     this.onPanUpdate,
     super.key,
   });
@@ -26,10 +31,12 @@ class DividerItem extends StatefulWidget {
 
 class _DividerItemState extends State<DividerItem> {
   bool isHovered = false;
-  bool isEdit = false;
+
+  bool get isEdit =>  widget.item.isEdit;
+  bool get isEditTitle => widget.item.isEditTitle;
   bool isDragging = false;
 
-  final duration = Duration(milliseconds: 400);
+  final duration = const Duration(milliseconds: 400);
   final LayerLink _layerLink = LayerLink();
   OverlayEntry? _overlayEntry;
   TextEditingController titleController = TextEditingController();
@@ -46,7 +53,7 @@ class _DividerItemState extends State<DividerItem> {
     if (!focusNode.hasFocus) {
       widget.item.title = titleController.text;
       setState(() {
-        isEdit = false;
+        widget.item.isEditTitle = false;
       });
     }
   }
@@ -69,6 +76,7 @@ class _DividerItemState extends State<DividerItem> {
               onTap: () {
                 _overlayEntry?.remove();
                 _overlayEntry = null;
+                setState(() {});
               },
               child: Container(color: Colors.transparent),
             ),
@@ -111,7 +119,7 @@ class _DividerItemState extends State<DividerItem> {
         ],
       ),
     );
-
+    setState(() {});
     Overlay.of(context).insert(_overlayEntry!);
   }
 
@@ -142,7 +150,7 @@ class _DividerItemState extends State<DividerItem> {
           ),
         ),
         InkWell(
-          onTap: () {},
+          onTap: widget.onTap,
           onHover: (b) => setState(() {
             isHovered = b;
           }),
@@ -159,32 +167,49 @@ class _DividerItemState extends State<DividerItem> {
                 AnimatedDefaultTextStyle(
                   duration: duration,
                   style: getTextStyle().bodyMedium!.copyWith(
-                    fontSize: show ? 12 : 10,
-                    color: show
-                        ? getColorScheme().primary
-                        : getColorScheme().outline,
-                  ),
-                  child: GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        isEdit = true;
-                      });
-                    },
-                    child: isEdit
-                        ? IntrinsicWidth(
-                            child: TextField(
-                              controller: titleController,
-                              autofocus: true,
-                              focusNode: focusNode,
-                              onSubmitted: (s) {
-                                widget.item.title = s;
-                                setState(() {
-                                  isEdit = false;
-                                });
-                              },
-                            ),
-                          )
-                        : Text(widget.item.title.ifEmpty('???')),
+                        fontSize: show ? 12 : 10,
+                        color: show
+                            ? getColorScheme().primary
+                            : getColorScheme().outline,
+                      ),
+                  child: isEdit && !kIsMobile
+                      ? IntrinsicWidth(
+                          child: TextField(
+                            controller: titleController,
+                            autofocus: true,
+                            focusNode: focusNode,
+                            onSubmitted: (s) {
+                              widget.item.title = s;
+                              setState(() {
+                                widget.item.isEditTitle = true;
+                              });
+                            },
+                          ),
+                        )
+                      : Text(widget.item.title.ifEmpty('???')),
+                ),
+                AnimatedOpacity(
+                  opacity: (show | (_overlayEntry != null)) ? 1 : 0,
+                  duration: duration,
+                  child: CompositedTransformTarget(
+                    link: _layerLink,
+                    child: GestureDetector(
+                      onTap: show?widget.onSelect:null,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.transparent,
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: getColorScheme().outline.withAlpha(120),
+                          ),
+                        ),
+                        padding: EdgeInsets.all(2),
+                        child: MaterialIcons.fromInt(57757,
+                          size: 16,
+                          color: isEditTitle?getColorScheme().primary:getColorScheme().outline,
+                        ),
+                      ),
+                    ),
                   ),
                 ),
                 AnimatedOpacity(
@@ -193,8 +218,7 @@ class _DividerItemState extends State<DividerItem> {
                   child: CompositedTransformTarget(
                     link: _layerLink,
                     child: GestureDetector(
-                      onTap: () => _showFollower(context),
-
+                      onTap: show?() => _showFollower(context):null,
                       child: Container(
                         decoration: BoxDecoration(
                           color: Colors.transparent,
@@ -207,7 +231,7 @@ class _DividerItemState extends State<DividerItem> {
                         child: Icon(
                           Icons.color_lens_outlined,
                           size: 16,
-                          color: getColorScheme().primary,
+                          color: _overlayEntry != null?getColorScheme().primary:getColorScheme().outline,
                         ),
                       ),
                     ),
@@ -218,13 +242,14 @@ class _DividerItemState extends State<DividerItem> {
                   duration: duration,
                   child: GestureDetector(
                     onTap: () {},
-                    onPanUpdate: widget.onPanUpdate,
-                    onPanStart: (p) => setState(() {
+                    onPanUpdate: show?widget.onPanUpdate:null,
+                    onPanStart: show?(p) => setState(() {
                       isDragging = true;
-                    }),
-                    onPanEnd: (p) => setState(() {
+                    }):null,
+                    onPanEnd: show?(p) => setState(() {
                       isDragging = false;
-                    }),
+                      ProjectDatabase.dividers.update(widget.item.toDb(), widget.item.id);
+                    }):null,
                     child: Container(
                       decoration: BoxDecoration(
                         color: Colors.transparent,
@@ -234,7 +259,8 @@ class _DividerItemState extends State<DividerItem> {
                         ),
                       ),
                       padding: EdgeInsets.all(2),
-                      child: MaterialIcons.fromInt(63072, size: 16),
+                      child: MaterialIcons.fromInt(63072, size: 16,
+                          color: isDragging?getColorScheme().primary:getColorScheme().outline,),
                     ),
                   ),
                 ),

@@ -42,7 +42,8 @@ class MainButton extends StatelessWidget {
         child: Opacity(
           opacity: isActive ? 1 : 0.4,
           child: InkWell(
-            highlightColor: Colors.white.withAlpha(30),
+            highlightColor: getColorScheme().primary.withAlpha(30),
+            splashColor: getColorScheme().primary.withAlpha(30),
             onTap: isActive && !isLoading
                 ? () {
                     onClick();

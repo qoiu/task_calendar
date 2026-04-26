@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:qoiu_utils/qoiu_utils.dart';
 
 import '../task_board.dart';
-import '../task_container.dart';
+import 'task_container.dart';
 
 class AddDividerButton extends StatefulWidget {
   final double scale;

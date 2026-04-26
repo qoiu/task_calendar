@@ -14,6 +14,7 @@ import 'package:task_calendar/screens/menu/menu_page.dart';
 import 'package:task_calendar/screens/skills/skills_list.dart';
 import 'package:task_calendar/screens/stub_screen.dart';
 import 'package:task_calendar/utils/enum/screen_tag.dart';
+import 'package:task_calendar/utils/shared_preference.dart';
 import 'package:task_calendar/utils/utils.dart';
 
 String? currentRoute;
@@ -24,9 +25,9 @@ class MainAppPage extends StatefulWidget {
   @override
   State<MainAppPage> createState() => _MainAppPage();
 }
-
+String _currentTabKey = 'current_tab_key';
 class _MainAppPage extends State<MainAppPage> {
-  int currentIndex = 0;
+  int currentIndex = AppShared.prefs.getInt(_currentTabKey)??3;
 
   List<TabItem> tabs = [];
 
@@ -35,7 +36,9 @@ class _MainAppPage extends State<MainAppPage> {
     super.initState();
     tasksDatabase.init();
     initTabs();
-    tabs[0].isLoaded = true;
+    ['cIndex',AppShared.prefs.getInt(_currentTabKey)].print();
+    currentIndex = AppShared.prefs.getInt(_currentTabKey)??3;
+    tabs[currentIndex].isLoaded = true;
   }
 
   void initTabs() {
@@ -71,25 +74,6 @@ class _MainAppPage extends State<MainAppPage> {
           screenBuilder: (context) => const MenuPage(),
           index: 4),
     ];
-  }
-
-  void onSwitchTabClick(int index, {bool forcePop = false}) {
-    debugPrint("onSwitchTabClick($index,$forcePop)");
-    setState(() {
-      tabs[index].isLoaded = true;
-    });
-    if (index == currentIndex) {
-      Navigator.of(tabs[index].key.currentContext!)
-          .popUntil((route) => route.isFirst);
-    } else {
-      setState(() {
-        currentIndex = index;
-      });
-    }
-    if (forcePop) {
-      Navigator.of(tabs[index].key.currentContext!)
-          .popUntil((route) => route.isFirst);
-    }
   }
 
   @override
@@ -133,7 +117,9 @@ class _MainAppPage extends State<MainAppPage> {
                 currentIndex: currentIndex,
                 items:
                     tabs.map((e) => e.getBottomBarItem(currentIndex)).toList(),
-                onTap: (index) {
+                onTap: (index) async{
+                  await AppShared.prefs.setInt(_currentTabKey, index);
+                  ['cIndex',AppShared.prefs.getInt(_currentTabKey)].print();
                   setState(() {
                     tabs[index].isLoaded = true;
                     if (index == currentIndex) {

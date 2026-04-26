@@ -30,25 +30,30 @@ class BaseDatabase<T> {
   }
 
   ///@param where - "WHERE date='$day'"
-  Future<List<T>> getById(int id) async {
-    var response = await database.rawQuery("SELECT*FROM $name");
+  Future<T?> getById(int id) async {
+    var response = await database.rawQuery("SELECT*FROM $name WHERE id='$id'");
     'result: $response'.print();
     var result = response.map((e) {
       return fromDB(e);
     }).toList();
-    return result;
+    return result.firstOrNull;
   }
 
-  Future add(JsonMap item) async {
-    database.insert(name, item);
+  Future<int> add(JsonMap item) async {
+    return await database.insert(name, item);
   }
 
-  Future update(JsonMap task) async {
+  Future<T> addAndUse(JsonMap item) async {
+    var id = await add(item);
+    return (await getById(id))!;
+  }
+
+  Future update(JsonMap task, int id) async {
     database.update(
       name,
       task,
       where: 'id = ?',
-      whereArgs: [task['id']],
+      whereArgs: [id],
     );
   }
 

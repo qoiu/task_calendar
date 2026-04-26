@@ -7,7 +7,7 @@ TasksDatabase tasksDatabase = TasksDatabase();
 Map<int, Future Function(Database db)> updates = {
   2: (db) async {
     await db.execute(
-        'ALTER TABLE tasks ADD COLUMN complete INTEGER NOT NULL DEFAULT 0');
+        'ALTER TABLE tasks ADD COLUMN complete INTEGER DEFAULT 0');
   },
   3: (db) async {
     await db.execute('''

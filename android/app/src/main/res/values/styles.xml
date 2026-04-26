@@ -2,17 +2,26 @@
 <resources>
     <!-- Theme applied to the Android Window while the process is starting when the OS's Dark Mode setting is off -->
     <style name="LaunchTheme" parent="@android:style/Theme.Light.NoTitleBar">
-        <!-- Show a splash screen on the activity. Automatically removed when
-             the Flutter engine draws its first frame -->
-        <item name="android:windowBackground">@drawable/launch_background</item>
-    </style>
-    <!-- Theme applied to the Android Window as soon as the process has started.
-         This theme determines the color of the Android Window while your
-         Flutter UI initializes, as well as behind your Flutter UI while its
-         running.
+        <item name="android:windowBackground">@color/surface</item>
+        <item name="android:windowSplashScreenAnimatedIcon">@mipmap/qt_logo</item>
 
-         This Theme is only used starting with V2 of Flutter's Android embedding. -->
-    <style name="NormalTheme" parent="@android:style/Theme.Light.NoTitleBar">
-        <item name="android:windowBackground">?android:colorBackground</item>
+        <!--        <item name="windowSplashScreenBackground">@color/surface</item>-->
+<!--        <item name="postSplashScreenTh      <item>-->
+
+        <!--            <bitmap-->
+        <!--                    android:src="@drawable/ic_launcher_release"-->
+        <!--                    android:gravity="center"/>-->
+
+        <!--        </item>eme">@style/NormalTheme</item>-->\
+<!--  -->
     </style>
+<!--    <style name="NormalTheme" parent="@android:style/Theme.Light.NoTitleBar">-->
+<!--        <item name="android:windowBackground">@color/surface</item>-->
+<!--    </style>-->
+<!--    <style name="AppTheme.Launcher">-->
+<!--&lt;!&ndash;        <item name="android:windowBackground">@colors/surface</item>&ndash;&gt;-->
+<!--        &lt;!&ndash; для Android 5+ вы можете поменять цвет colorPrimaryDark, чтобы соответствовать цвету windowBackground &ndash;&gt;-->
+<!--         <item name="colorPrimaryDark">@android:color/white</item>-->
+<!--    </style>-->
+    <color name="surface">#070029</color>
 </resources>
