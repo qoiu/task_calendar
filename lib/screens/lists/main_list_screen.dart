@@ -95,10 +95,13 @@ class _MainListScreenState extends State<MainListScreen> {
             );
           }).toList(),
         ),
-        UnsignedTasks(
-            update: () => setState(() {}),
-            controller: unsignedTasksController,
-            listController: listController),
+        Container(
+          padding: EdgeInsets.only(top: MediaQuery.of(context).viewPadding.top),
+          child: UnsignedTasks(
+              update: () => setState(() {}),
+              controller: unsignedTasksController,
+              listController: listController),
+        ),
         Container(
             alignment: Alignment.bottomRight,
             padding: const EdgeInsets.all(30),
