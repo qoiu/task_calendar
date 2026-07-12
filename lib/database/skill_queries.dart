@@ -1,42 +1,27 @@
-
 import 'package:qoiu_utils/qoiu_utils.dart';
-import 'package:task_calendar/database/tasks_database.dart';
 import 'package:task_calendar/models/skill.dart';
-import 'package:task_calendar/models/task.dart';
 
-SkillQueries skillQueries = SkillQueries();
- class SkillQueries{
+import 'package:qoiu_db/database/base_database_table.dart';
 
-   Future<List<SkillData>> getSkills()async{
-     var response = await tasksDatabase.database.rawQuery(
-         "SELECT*FROM skills");
-     'result: $response'.print();
-     var result = response.map((e) {
-       return SkillData.fromDB(e);
-     }).toList();
-     return result;
-   }
+class SkillQueries extends BaseDatabaseTable<SkillData> {
+  SkillQueries() : super(name: 'skills', fromDB: SkillData.fromDB);
 
-   Future add(SkillData skill)async {
-     'add skill: ${skill.toDb()}'.print();
-     tasksDatabase.database.insert('skills', skill.toDb());
-     ['Skill добавлен'.dpRed(),skill.toDb()].print();
-   }
+  @override
+  String get onCreate => '''
+          CREATE TABLE IF NOT EXISTS skills (
+    id INTEGER PRIMARY KEY,
+    title TEXT NOT NULL,
+    description TEXT,
+    complete INTEGER,             
+    date TEXT,                    
+    time TEXT,                    
+    progress INTEGER,             
+    duration INTEGER,             
+    target INTEGER,               
+    lvl INTEGER,                  
+    lvlPercent REAL,              
+    extra TEXT                    
+)
+          ''';
 
-   Future update(SkillData skill)async {
-     ['update', skill.toDb()].print();
-     tasksDatabase.database.update('skills', skill.toDb(),
-       where: 'id = ?',
-       whereArgs: [skill.id],);
-     ['Skill обновлен'.dpRed(),skill.toDb()].print();
-   }
-
-   Future<void> deleteTask(int id) async {
-     await tasksDatabase.database.delete(
-       'skills',
-       where: 'id = ?',
-       whereArgs: [id],
-     );
-     ['Skill удален'.dpRed(),id].print();
-   }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:qoiu_utils/components/common_text_builder.dart';
+import 'package:qoiu_utils/extensions/global_key.dart';
 import 'package:qoiu_utils/qoiu_utils.dart';
 import 'package:task_calendar/models/task.dart';
 import 'package:task_calendar/utils/utils.dart';
@@ -31,31 +32,34 @@ class TaskWidget extends StatelessWidget {
       key: applySize?task.taskKey:null,
       alignment: Alignment.centerLeft,
       decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(50),
-          gradient: LinearGradient(colors: [
-            task.color,
-            task.extraColor,
-            task.color
-          ], stops: const [
-            0.2,
-            0.5,
-            0.8,
-          ], begin: Alignment.topCenter, end: Alignment.bottomCenter)),
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: getColorScheme().primary),
+          // gradient: LinearGradient(colors: [
+          //   task.color,
+          //   task.extraColor,
+          //   task.color
+          // ], stops: const [
+          //   0.2,
+          //   0.5,
+          //   0.8,
+          // ], begin: Alignment.topCenter, end: Alignment.bottomCenter)),
+        color: getColorScheme().primary.withAlpha(40)
+      ),
       child: Padding(
         padding: _taskPadding,
         child: Row(
           children: [
-            if (task.complete) ...{
-              const Icon(
-                  Icons.star,
-                  size: 20,
-                  color: Colors.orange
-              )
-            },
+            // if (task.complete) ...{
+            //   const Icon(
+            //       Icons.star,
+            //       size: 20,
+            //       color: Colors.orange
+            //   )
+            // },
             Expanded(
-                child: TextBuilder('${task.title} ${TaskWidget.taskSize(task)}')
-                    .color(task.complete?Colors.orange:task.color.oppositeColor())
-                .maxLines(2)
+                child: TextBuilder('${task.title}')
+                    .color(task.complete?getColorScheme().primary:getColorScheme().surfaceContainer)
+                .maxLines(task.showInfo?null:2)
                 .ellipsis()
                     .build()),
           ],

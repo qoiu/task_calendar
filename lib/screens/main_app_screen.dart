@@ -2,17 +2,15 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:qoiu_utils/extensions/color.dart';
 import 'package:qoiu_utils/navigation.dart';
 import 'package:qoiu_utils/qoiu_utils.dart';
-import 'package:task_calendar/database/tasks_database.dart';
-import 'package:task_calendar/project_module/task_board.dart';
 import 'package:task_calendar/project_module/project_main_theme.dart';
 import 'package:task_calendar/project_module/task_loader_screen.dart';
 import 'package:task_calendar/screens/lists/main_list_screen.dart';
 import 'package:task_calendar/screens/log_list.dart';
 import 'package:task_calendar/screens/menu/menu_page.dart';
 import 'package:task_calendar/screens/skills/skills_list.dart';
-import 'package:task_calendar/screens/stub_screen.dart';
 import 'package:task_calendar/utils/enum/screen_tag.dart';
 import 'package:task_calendar/utils/shared_preference.dart';
 import 'package:task_calendar/utils/utils.dart';
@@ -34,7 +32,7 @@ class _MainAppPage extends State<MainAppPage> {
   @override
   void initState() {
     super.initState();
-    tasksDatabase.init();
+    // DB.main.init();
     initTabs();
     ['cIndex',AppShared.prefs.getInt(_currentTabKey)].print();
     currentIndex = AppShared.prefs.getInt(_currentTabKey)??3;

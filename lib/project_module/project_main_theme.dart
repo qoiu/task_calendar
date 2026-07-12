@@ -56,24 +56,24 @@ class ProjectMainTheme {
       fillColor: WidgetStateColor.resolveWith((states) {
         return Colors.transparent;
       }),
-      enabledBorder: OutlineInputBorder(
+      enabledBorder: const OutlineInputBorder(
         borderRadius: BorderRadius.all(Radius.circular(10)),
-        borderSide: BorderSide(color: Colors.transparent, width: 1),
+        borderSide: BorderSide(color: _grey, width: 1),
       ),
-      focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.all(Radius.circular(10)),
-        borderSide: BorderSide(color: mainColor, width: 1),
-      ),
-      errorBorder: OutlineInputBorder(
+      focusedBorder: const OutlineInputBorder(
         borderRadius: BorderRadius.all(Radius.circular(10)),
         borderSide: BorderSide(color: mainColor, width: 1),
       ),
-      focusedErrorBorder: OutlineInputBorder(
+      errorBorder: const OutlineInputBorder(
+        borderRadius: BorderRadius.all(Radius.circular(10)),
+        borderSide: BorderSide(color: mainColor, width: 1),
+      ),
+      focusedErrorBorder: const OutlineInputBorder(
         borderRadius: BorderRadius.all(Radius.circular(10)),
         borderSide: BorderSide(color: mainColor, width: 1),
       ),
     ),
-    colorScheme: ColorScheme.light(
+    colorScheme: const ColorScheme.light(
       primary: mainColor,
       inversePrimary: _inversePrimary,
       primaryContainer: _primaryContainer,

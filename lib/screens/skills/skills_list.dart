@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:qoiu_utils/components/common_text_builder.dart';
-import 'package:task_calendar/database/skill_queries.dart';
+import 'package:qoiu_utils/qoiu_utils.dart';
 import 'package:task_calendar/modals/create_skill/create_skill_modal.dart';
 import 'package:task_calendar/modals/skill_progress_modal.dart';
 import 'package:task_calendar/models/skill.dart';
 import 'package:task_calendar/screens/skills/components/skill_item.dart';
 import 'package:task_calendar/utils/utils.dart';
+
+import '../../database/main_database.dart';
 
 class SkillsList extends StatefulWidget {
   const SkillsList({super.key});
@@ -24,7 +26,7 @@ class _SkillsListState extends State<SkillsList> {
   }
 
   loadSkills()async{
-    skills = await skillQueries.getSkills();
+    skills = await DB.skills.getAll();
     setState(() {});
   }
 
@@ -33,9 +35,12 @@ class _SkillsListState extends State<SkillsList> {
     return Stack(
       children: [
         ListView(
-              padding: EdgeInsets.all(20),
+              padding: const EdgeInsets.all(20),
               children: skills
           .indexedMap((index, skill) => [
+            if(index==0)...{
+              Container(height: MediaQuery.of(context).viewPadding.top+10,)
+            },
             if(index==0 || skill.daysLeft!=skills[index-1].daysLeft)...{
               TextBuilder('Осталось ${skill.daysLeft} дней').titleMedium().build(),
               const SizedBox(height: 3),
@@ -73,9 +78,10 @@ class _SkillsListState extends State<SkillsList> {
                   }
                 },
                 shape: const CircleBorder(),
-                child: const Icon(
+                backgroundColor: getColorScheme().primary,
+                child: Icon(
                   Icons.add,
-                  color: Colors.white,
+                  color: getColorScheme().onPrimary,
                 ),
               ),
             )),

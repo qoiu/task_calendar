@@ -1,7 +1,9 @@
+import 'package:dotted_line/dotted_line.dart';
 import 'package:flutter/material.dart';
 import 'package:qoiu_utils/components/common_text_builder.dart';
 import 'package:qoiu_utils/qoiu_utils.dart';
 import 'package:task_calendar/database/task_queries.dart';
+import 'package:task_calendar/database/main_database.dart';
 import 'package:task_calendar/models/task.dart';
 import 'package:task_calendar/screens/lists/components/list_date_item.dart';
 import 'package:task_calendar/screens/lists/components/list_time_Item.dart';
@@ -49,14 +51,15 @@ class _ListDateTimeItemState extends State<ListDateTimeItem> with UpdaterMixin {
   }
 
   @override
-  dispose(){
+  dispose() {
     super.dispose();
     'dispose: ${widget.date}'.dpRed().print();
   }
 
   getTasks() async {
-    tasks = await taskQueries.getTasksAtDay(widget.date);
-    'tasks(${widget.date}): ${tasks.map((e) => e.toDb())}'.print();
+    ['get tasks', widget.date].print();
+    tasks = await DB.tasks.getTasksAtDay(widget.date);
+    'tasks(${widget.date}): ${tasks.map((e) => e.toDB())}'.print();
     setState(() {});
   }
 
@@ -64,22 +67,28 @@ class _ListDateTimeItemState extends State<ListDateTimeItem> with UpdaterMixin {
   Widget build(BuildContext context) {
     return Column(
       key: Key(widget.date),
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.symmetric(vertical: 10),
+          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
           child: ListDateItem(widget.date),
         ),
-        ...generateItems.map((i) => ListTimeItem(widget.date,
+        ...generateItems.map((i) => ListTimeItem(
+              widget.date,
               i.time,
               listController: widget.listController,
-              update: ()=>setState(() {}),
+              update: () => setState(() {}),
+              addTask: (task)=>setState(() {
+                tasks.add(task);
+              }),
               updateScreen: () {
                 widget.update();
                 setState(
                   () {},
                 );
               },
-              task: tasks.where((e) => e.time == i.time).firstOrNull, refreshDay: getTasks,
+              task: tasks.where((e) => e.time == i.time).firstOrNull,
+              refreshDay: getTasks,
             )),
       ],
     );

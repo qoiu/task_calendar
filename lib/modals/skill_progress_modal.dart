@@ -4,11 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:qoiu_utils/components/common_text_builder.dart';
 import 'package:qoiu_utils/qoiu_utils.dart';
 import 'package:qoiu_utils/statefull_modal.dart';
-import 'package:task_calendar/database/skill_queries.dart';
 import 'package:task_calendar/models/skill.dart';
 import 'package:task_calendar/screens/lists/components/main_button.dart';
 import 'package:task_calendar/utils/utils.dart';
 
+import '../database/main_database.dart';
 import 'center_modal_template.dart';
 
 class SkillProgressModal extends StatefulModal {
@@ -156,7 +156,7 @@ class _CreateTaskModalState extends State<SkillProgressModal> {
             const SizedBox(height: 10),
             MainButton('Сохранить', () async {
               skill.progress += progress;
-              await skillQueries.update(skill);
+              await DB.skills.update(skill);
               Navigator.of(context).pop(true);
             })
           ],

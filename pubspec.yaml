@@ -13,18 +13,25 @@ dependencies:
   cupertino_icons: ^1.0.6
   intl: any
   flutter_svg: any
-  sqflite: ^2.3.3+1
   infinite_scroll_pagination: any
+  sqflite_common_ffi: ^2.4.0
   smooth_page_indicator: ^1.2.1
   dotted_line: ^3.2.3
   flutter_color_picker_plus: any
   auto_size_text: ^3.0.0
   shared_preferences: ^2.5.5
+  dox_query_builder: ^2.1.0
 
   qoiu_utils:
     git:
-      url:  https://github.com/qoiu/flutter_libs
+      url:  git@github.com:/qoiu/flutter_libs
       path: qoiu_utils
+      ref: 'master'
+  qoiu_db:
+    git:
+      url:  git@github.com:/qoiu/flutter_libs
+      path: qoiu_db
+      ref: 'master'
 
 dev_dependencies:
   flutter_test:

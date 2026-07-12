@@ -10,15 +10,14 @@ class ListDateItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var weekday = formatDate.tryParse(date)?.let((e)=>formatDateWithWeekday.format(e))??date;
-    return Center(
-      child: Container(
-        decoration: BoxDecoration(
-          color: getColorScheme().primary.withOpacity(0.5),
-          borderRadius: BorderRadius.circular(20)
-        ),
-        padding: const EdgeInsets.all(5),
-        child: TextBuilder((weekday).replaceRange(0, 1, weekday.substring(0,1).toUpperCase())).build(),
+    return Container(
+      decoration: BoxDecoration(
+        border: Border.all(color: getColorScheme().outline, width: 0.5),
+        color: getColorScheme().outline.withAlpha(90),
+        borderRadius: BorderRadius.circular(5)
       ),
+      padding: const EdgeInsets.all(5),
+      child: TextBuilder((weekday).replaceRange(0, 1, weekday.substring(0,1).toUpperCase())).style(getTextStyle().bodyMedium).color(getColorScheme().surfaceContainer).fontSize(12).build(),
     );
   }
 }

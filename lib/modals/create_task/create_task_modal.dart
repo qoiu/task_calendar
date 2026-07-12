@@ -1,17 +1,15 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart' show Colors;
 import 'package:qoiu_utils/qoiu_utils.dart';
 import 'package:qoiu_utils/statefull_modal.dart';
-import 'package:qoiu_utils/typedef.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:task_calendar/components/cloud_button.dart';
-import 'package:task_calendar/database/task_queries.dart';
 import 'package:task_calendar/modals/create_task/components/subtask_editor.dart';
 import 'package:task_calendar/models/task.dart';
 import 'package:task_calendar/models/task_property.dart';
 import 'package:task_calendar/screens/lists/components/main_button.dart';
 import 'package:task_calendar/screens/lists/components/text_field.dart';
 
+import '../../database/main_database.dart';
 import '../bottom_sheet_template.dart';
 
 class CreateTaskModal extends StatefulModal {
@@ -71,7 +69,7 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
                         },),
                         const SizedBox(height: 10),
                         MainButton('Создать', () async {
-                          await taskQueries
+                          await DB.tasks
                               .add(task);
                           Navigator.of(context).pop(true);
                         })

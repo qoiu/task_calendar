@@ -1,35 +1,21 @@
 
-import 'package:qoiu_utils/qoiu_utils.dart';
-import 'package:task_calendar/database/tasks_database.dart';
 import 'package:task_calendar/models/calendar_log.dart';
-import 'package:task_calendar/models/task.dart';
 
-LogsQueries logQueries = LogsQueries();
- class LogsQueries{
+import 'package:qoiu_db/database/base_database_table.dart';
 
-   Future<List<CalendarLog>> getTasksAtDay(String day)async{
-     var response = await tasksDatabase.database.rawQuery(
-         "SELECT*FROM logs WHERE event_date='$day'");
-     'result: $response'.print();
-     var result = response.map((e) {
-       return CalendarLog.fromMap(e);
-     }).toList();
-     return result;
-   }
 
-   Future<List<CalendarLog>> getAll()async{
-     var response = await tasksDatabase.database.rawQuery(
-         "SELECT*FROM logs");
-     'result: $response'.print();
-     var result = response.map((e) {
-       return CalendarLog.fromMap(e);
-     }).toList();
-     return result;
-   }
+ class LogsQueries extends BaseDatabaseTable<CalendarLog>{
 
-  Future add(CalendarLog log)async {
-     'add task: ${log.toMap()}'.print();
-     tasksDatabase.database.insert('logs', log.toMap());
-     ['Лог добавлен'.dpRed(),log.toMap()].print();
-  }
+   LogsQueries():super(name: 'logs', fromDB: CalendarLog.fromMap);
+
+   @override
+   String get onCreate => '''CREATE TABLE IF NOT EXISTS logs (
+      id INTEGER PRIMARY KEY,
+      event_date INTEGER,
+      post_date INTEGER,
+      extra TEXT,
+      message TEXT,
+      priority INTEGER
+    )
+  ''';
 }

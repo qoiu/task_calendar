@@ -1,21 +1,26 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:qoiu_db/database/db_entity.dart';
 import 'package:qoiu_utils/qoiu_utils.dart';
-import 'package:task_calendar/database/log_queries.dart';
-import 'package:task_calendar/database/task_queries.dart';
+import 'package:qoiu_utils/typedef.dart';
 import 'package:task_calendar/models/calendar_log.dart';
 import 'package:task_calendar/models/task_property.dart';
 import 'package:task_calendar/themes.dart';
+import 'package:task_calendar/utils/json_map_extension.dart';
 import 'package:task_calendar/utils/utils.dart';
 
-class Task {
-  int? id;
+import '../database/main_database.dart';
+
+class Task implements DbEntity{
+  @override
+  int id;
   String title;
   String? description;
   Color taskColor;
   DateTime? start;
   bool complete;
+  bool showInfo = false;
   List<TaskProperty> properties;
 
 
@@ -39,45 +44,33 @@ class Task {
   String get time =>
       start?.let((e) => formatTime.format(e).padLeft(5, '0')) ?? '';
 
-
-  addProperty(String type){
-    if(properties.where((e)=>e.type==type).isEmpty){
+  addProperty(String type) {
+    if (properties.where((e) => e.type == type).isEmpty) {
       'isEmpty'.dpRed().print();
-      TaskProperty.newObject(type)?.let((e)=>properties.add(e));
+      TaskProperty.newObject(type)?.let((e) => properties.add(e));
     }
   }
 
-  T? getProperty<T>(){
+  T? getProperty<T>() {
     return properties.whereType<T>().firstOrNull;
   }
 
-  SubtaskListTaskProperty? getSubtasks()=>getProperty<SubtaskListTaskProperty>();
+  SubtaskListTaskProperty? getSubtasks() =>
+      getProperty<SubtaskListTaskProperty>();
 
   // : '${formatTime.format(start).padLeft(5, '0')} - ${formatTime.format(end!).padLeft(5, '0')}';
 
   Task(
       {required this.title,
-      this.id,
+        this.id = -1,
       this.description,
       this.start,
       this.taskColor = MainTheme.accent,
       this.complete = false,
+      this.showInfo = false,
       this.properties = const []}) {
     updateColors();
     properties = [];
-  }
-
-  Task.fromJson(Map<String, dynamic> json)
-      : id = json['id'],
-        title = json['title'].toString(),
-        description = json['description'],
-        taskColor = json['color'] ?? MainTheme.accent,
-        complete = json['complete'] ?? false,
-        start = json['start'] != null
-            ? DateTime.fromMillisecondsSinceEpoch(json['start'])
-            : DateTime.now(),
-        properties = parseProperties(json['extra']) {
-    updateColors();
   }
 
   static List<TaskProperty> parseProperties(List? json) {
@@ -99,7 +92,8 @@ class Task {
         start = null,
         taskColor = json['color'] ?? MainTheme.accent,
         complete = json['complete'] == 1,
-        properties = parseProperties(jsonDecode(json['extra'])) {
+        showInfo = json.extra?['show_info'] == 1,
+        properties = parseProperties(parseList(json.extra?['properties'], (e)=>e as JsonMap)) {
     'date: ${json['date']}'.print();
     'time: ${json['time']}'.print();
     if (json['date'] != null && json['time'] != null) {
@@ -111,22 +105,31 @@ class Task {
     }
   }
 
-  updateStatus(){
+  updateStatus() {
     var now = DateTime.now().millisecondsSinceEpoch;
-    if(!complete && (start?.copyWith(hour: 23, minute: 59).millisecondsSinceEpoch??now)<now){
+    if (!complete &&
+        (start?.copyWith(hour: 23, minute: 59).millisecondsSinceEpoch ?? now) <
+            now) {
       start = null;
-      logQueries.add(CalendarLog('Вы не выполнили задачу($title) - задача возвращена в общие задачи'));
-      taskQueries.update(this);
+      DB.logs.add(CalendarLog(
+          'Вы не выполнили задачу($title) - задача возвращена в общие задачи'));
+      DB.tasks.update(this);
     }
   }
 
-  Map<String, Object?> toDb() => {
+  @override
+  JsonMap toDB() => {
         'title': title,
         'description': description,
-        'complete': complete,
+        'complete': complete ? 1 : 0,
         'date': start?.let((e) => formatDate.format(e)),
         'time': start?.let((e) => formatTime.format(e)),
-        'extra': jsonEncode(properties.map((e) => e.toJson()).toList())
+        'extra': jsonEncode(getExtra())
+      };
+
+  JsonMap getExtra() => {
+        'properties': properties.map((e) => e.toJson()).toList(),
+        'showInfo': showInfo ? 0 : 1
       };
 
   Task copyWith({

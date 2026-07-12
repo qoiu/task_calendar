@@ -73,7 +73,7 @@ class MainButton extends StatelessWidget {
                           text,
                           maxLines: 2,
                           style: getTextStyle().titleMedium?.copyWith(
-                              color: textColor ?? getColorScheme().primary),
+                              color: textColor ?? getColorScheme().surfaceContainer),
                         ),
                       ),
                       if (isLoading) ...{

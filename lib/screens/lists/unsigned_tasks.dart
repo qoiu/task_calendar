@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:qoiu_utils/components/common_text_builder.dart';
 import 'package:qoiu_utils/qoiu_utils.dart';
 import 'package:task_calendar/components/task_widget.dart';
-import 'package:task_calendar/database/task_queries.dart';
+import 'package:task_calendar/database/main_database.dart';
 import 'package:task_calendar/modals/create_task/create_task_modal.dart';
 import 'package:task_calendar/models/task.dart';
 import 'package:task_calendar/screens/lists/components/main_list_controller.dart';
@@ -44,10 +43,9 @@ class UnsignedTasksController {
     }
   }
 
-
   getTasks() async {
-    await taskQueries.checkOldTasks();
-    tasks = await taskQueries.getTasksUnsigned();
+    await DB.tasks.checkOldTasks();
+    tasks = await DB.tasks.getTasksUnsigned();
     tasks.insert(0, Task(title: 'test'));
     updateDataController.update();
   }
@@ -72,7 +70,7 @@ const _hideCoef = 0.3;
 
 class _UnsignedTasksState extends State<UnsignedTasks>
     with SingleTickerProviderStateMixin, UpdaterMixin {
-  List<Task> get tasks=> widget.controller.tasks;
+  List<Task> get tasks => widget.controller.tasks;
 
   double get offset => widget.controller.offset;
 
@@ -82,7 +80,8 @@ class _UnsignedTasksState extends State<UnsignedTasks>
   Animation<double> get _animation => widget.controller._animation;
 
   @override
-  UpdateController get updateController => widget.controller.updateDataController;
+  UpdateController get updateController =>
+      widget.controller.updateDataController;
 
   @override
   void initState() {
@@ -91,11 +90,8 @@ class _UnsignedTasksState extends State<UnsignedTasks>
         AnimationController.unbounded(vsync: this);
     widget.controller._animation = widget.controller._animationController;
     widget.controller.getTasks();
-    WidgetsBinding.instance.addPostFrameCallback((_){
-
-    });
+    WidgetsBinding.instance.addPostFrameCallback((_) {});
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -167,20 +163,29 @@ class _UnsignedTasksState extends State<UnsignedTasks>
                               // widget.update();
                             },
                             onDragCompleted: () {
-                              taskQueries
-                                  .update(widget.listController.taskTime!);
-                              widget.listController.taskTime = null;
+                              widget.listController.taskTime?.let((task) {
+                                var task = widget.listController.taskTime!;
+                                if (task.id != -1) {
+                                  DB.tasks.update(task);
+                                } else {
+                                  DB.tasks.add(task);
+                                }
+                              });
+                              // widget.listController.taskTime = null;
                               widget.listController.refreshData.update();
                               widget.update();
-                              widget.controller.getTasks();
+                              // widget.controller.getTasks();
                             },
                             onDraggableCanceled: (_, __) {
                               widget.listController.taskTime = null;
                               widget.controller.show();
                               widget.update();
                             },
-                            child:
-                                IntrinsicWidth(child: TaskWidget(task: task, expand: false,)),
+                            child: IntrinsicWidth(
+                                child: TaskWidget(
+                              task: task,
+                              expand: false,
+                            )),
                           )),
                     ],
                   ),

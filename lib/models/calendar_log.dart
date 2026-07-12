@@ -1,5 +1,8 @@
-class CalendarLog {
-  final int? id;
+import 'package:qoiu_db/database/db_entity.dart';
+
+class CalendarLog extends DbEntity{
+  @override
+  final int id;
   final int priority;
   final String message;
   final DateTime? eventDate;
@@ -8,14 +11,14 @@ class CalendarLog {
 
   CalendarLog(
       this.message,{
-    this.id,
+    this.id=-1,
     this.eventDate,
     this.extra,
     this.priority=3
   }):postDate = DateTime.now();
 
   CalendarLog._({
-    this.id,
+    this.id=-1,
     this.eventDate,
     this.extra,
     this.postDate,
@@ -34,8 +37,8 @@ class CalendarLog {
     );
   }
 
-  Map<String, dynamic> toMap() => {
-    'id': id,
+  @override
+  Map<String, dynamic> toDB() => {
     'event_date': eventDate?.millisecondsSinceEpoch,
     'post_date': postDate?.millisecondsSinceEpoch,
     'extra': extra,

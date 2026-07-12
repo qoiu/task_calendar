@@ -1,8 +1,10 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:qoiu_db/database/db_entity.dart';
 import 'package:qoiu_utils/qoiu_utils.dart';
 import 'package:qoiu_utils/typedef.dart';
+import 'package:task_calendar/database/main_database.dart';
 import 'package:task_calendar/database/skill_queries.dart';
 import 'package:task_calendar/models/calendar_log.dart';
 import 'package:task_calendar/models/skill_property.dart';
@@ -13,8 +15,9 @@ import 'dart:math' as math;
 
 import '../database/log_queries.dart';
 
-class SkillData {
-  int? id;
+class SkillData extends DbEntity{
+  @override
+  int id;
   String title;
   String? description;
   Color skillColor;
@@ -63,7 +66,7 @@ class SkillData {
 
   SkillData(
       {required this.title,
-      this.id,
+      this.id=-1,
       this.description,
       this.endAt,
       this.skillColor = MainTheme.accent,
@@ -102,8 +105,8 @@ class SkillData {
       }
       endAt = now.add(Duration(days: durationInDays));
       endAt = endAt?.copyWith(hour: 23, minute: 59);
-      logQueries.add(CalendarLog('Установлено новое время навыка($title) - ${formatDateTime.format(endAt!)}'));
-      skillQueries.update(this);
+      DB.logs.add(CalendarLog('Установлено новое время навыка($title) - ${formatDateTime.format(endAt!)}'));
+      DB.skills.update(this);
     } else {
       StatisticSkill? statistic = getProperty<StatisticSkill>();
       ['now.millisecondsSinceEpoch > endAt!.millisecondsSinceEpoch', now.millisecondsSinceEpoch > endAt!.millisecondsSinceEpoch].print();
@@ -125,14 +128,17 @@ class SkillData {
         }else{
           statistic.failed +=1;
           lvl-=1;
+          if(lvl<0){
+            lvl=0;
+          }
           message='Навык: ($title) - опустился до($lvl) -';
           [title, 'failed - lvl down'].print();
         }
         progress = 0;
         var oldEnd = endAt!.copyWith(millisecond: 0);
         endAt = endAt!.add(Duration(days: durationInDays));
-        message?.let((e)=>logQueries.add(CalendarLog('$e${formatDateTime.format(endAt!)}', eventDate: oldEnd)));
-        skillQueries.update(this);
+        message.let((e)=>DB.logs.add(CalendarLog('$e${formatDateTime.format(endAt!)}', eventDate: oldEnd)));
+        DB.skills.update(this);
       }
     }
   }
@@ -141,7 +147,7 @@ class SkillData {
       : id = json['id'],
         title = json['title'].toString(),
         description = json['description'],
-        endAt = formatDate.tryParse(json['date']),
+        endAt = json['date']!=null?formatDate.tryParse(json['date']):null,
         skillColor = json['color'] ?? MainTheme.accent,
         complete = json['complete'] == 1,
         progress = json['progress'],
@@ -155,6 +161,7 @@ class SkillData {
     'date: ${json['date']}'.print();
     'time: ${json['time']}'.print();
     checkSkllDate();
+    if(lvl<0)lvl=0;
     if (json['date'] != null && json['time'] != null) {
       var time = formatTime.parse(json['time']);
       endAt = formatDate
@@ -176,7 +183,8 @@ class SkillData {
   //     lvl INTEGER,
   // lvlPercent REAL,
   //     extra TEXT
-  Map<String, Object?> toDb() => {
+  @override
+  Map<String, Object?> toDB() => {
         'title': title,
         'description': description,
         'complete': complete?1:0,

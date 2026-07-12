@@ -3,12 +3,12 @@ import 'package:flutter/services.dart';
 import 'package:qoiu_utils/statefull_modal.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:task_calendar/components/text_form_field.dart';
-import 'package:task_calendar/database/skill_queries.dart';
 import 'package:task_calendar/modals/create_task/components/subtask_editor.dart';
 import 'package:task_calendar/models/skill.dart';
 import 'package:task_calendar/models/task_property.dart';
 import 'package:task_calendar/screens/lists/components/main_button.dart';
 
+import '../../database/main_database.dart';
 import '../bottom_sheet_template.dart';
 
 class CreateSkillModal extends StatefulModal {
@@ -165,9 +165,9 @@ class _CreateTaskModalState extends State<CreateSkillModal> {
                         const SizedBox(height: 10),
                         MainButton(widget.skill==null?'Создать':'Сохранить', () async {
                           if(widget.skill==null) {
-                            await skillQueries.add(skill);
+                            await DB.skills.add(skill);
                           }else{
-                            await skillQueries.update(skill);
+                            await DB.skills.update(skill);
                           }
                           Navigator.of(context).pop(true);
                         })

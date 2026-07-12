@@ -28,6 +28,7 @@ class _MainListScreenState extends State<MainListScreen> {
     super.initState();
     _scrollController.addListener(_onScroll);
     WidgetsBinding.instance.addPostFrameCallback((_)async{
+      _loadMoreTop();
     });
   }
 
@@ -119,9 +120,10 @@ class _MainListScreenState extends State<MainListScreen> {
                   }
                 },
                 shape: const CircleBorder(),
-                child: const Icon(
+                backgroundColor: getColorScheme().primary,
+                child: Icon(
                   Icons.add,
-                  color: Colors.white,
+                  color: getColorScheme().onPrimary,
                 ),
               ),
             )),

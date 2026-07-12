@@ -68,7 +68,7 @@ class BottomSheetTemplate extends StatelessWidget {
                           decoration: BoxDecoration(
                               borderRadius:
                                   const BorderRadius.all(Radius.circular(10)),
-                              color: getColorScheme().onSurface),
+                              color: getColorScheme().outline),
                         ),
                       ),
                     ),
