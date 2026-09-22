@@ -1,6 +1,8 @@
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:qoiu_utils/extensions/color.dart';
 import 'package:qoiu_utils/navigation.dart';
@@ -14,8 +16,38 @@ import 'package:task_calendar/screens/skills/skills_list.dart';
 import 'package:task_calendar/utils/enum/screen_tag.dart';
 import 'package:task_calendar/utils/shared_preference.dart';
 import 'package:task_calendar/utils/utils.dart';
+import 'package:timezone/browser.dart' as tz;
+
+import '../main.dart';
 
 String? currentRoute;
+
+@pragma('vm:entry-point')
+void alarmCallback() async {
+  // Эту строку вы обязаны увидеть в консоли ровно через минуту!
+  print("=== СИСТЕМА ANDROID ВЫЗВАЛА ALARM_CALLBACK! ===");
+
+  WidgetsFlutterBinding.ensureInitialized();
+  final FlutterLocalNotificationsPlugin bgNotifyPlugin = FlutterLocalNotificationsPlugin();
+
+  const AndroidInitializationSettings initAndroid = AndroidInitializationSettings('@mipmap/ic_launcher');
+  await bgNotifyPlugin.initialize(settings: const InitializationSettings(android: initAndroid));
+
+  await bgNotifyPlugin.show(
+    id: 1,
+    title: 'Чудо произошло! 🎉',
+    body: 'Таймер сработал.',
+    notificationDetails: const NotificationDetails(
+      android: AndroidNotificationDetails(
+        'magic_alarm_channel_id',
+        'Чудесные Уведомления',
+        importance: Importance.max,
+        priority: Priority.high,
+        icon: '@mipmap/ic_launcher',
+      ),
+    ),
+  );
+}
 
 class MainAppPage extends StatefulWidget {
   const MainAppPage({super.key});
@@ -37,6 +69,83 @@ class _MainAppPage extends State<MainAppPage> {
     ['cIndex',AppShared.prefs.getInt(_currentTabKey)].print();
     currentIndex = AppShared.prefs.getInt(_currentTabKey)??3;
     tabs[currentIndex].isLoaded = true;
+    // Ждем, пока виджет полностью инициализируется в системе, и только потом запускаем
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      showInstantNotification();
+    });
+  }
+
+
+  Future<void> showInstantNotification() async {
+    // 1. Проверяем и запрашиваем разрешение на уведомления (для Android 13+)
+    final bool? granted = await flutterLocalNotificationsPlugin
+        .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
+        ?.requestNotificationsPermission();
+
+    if (granted ?? false) {
+      // 2. Настраиваем внешний вид и важность уведомления
+      const AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
+        'magic_alarm_channel_id', // ID канала (должен совпадать с тем, что создали в initAlarm)
+        'Чудесные Уведомления',    // Имя канала
+        importance: Importance.max, // Максимальная важность (чтобы всплыл баннер сверху)
+        priority: Priority.high,    // Высокий приоритет
+        playSound: true,            // Включить звук
+        icon: '@mipmap/ic_launcher',
+      );
+
+      const NotificationDetails platformDetails = NotificationDetails(android: androidDetails);
+
+      // 3. Показываем уведомление мгновенно
+      await flutterLocalNotificationsPlugin.show(
+        id: 999, // Уникальный ID конкретного пуша (если вызвать с тем же ID, старое пуш заменится новым)
+        title: 'Мгновенное чудо! ⚡', // Заголовок
+        body: 'Это уведомление пришло прямо сейчас.', // Текст сообщения
+        notificationDetails: platformDetails,
+      );
+    } else {
+      print("Пользователь запретил показ уведомлений!");
+    }
+  }
+  // Метод для запуска таймера
+  void _startPreciseTimer() async {
+    // 1. Запрашиваем разрешения
+    final bool? notificationsGranted = await flutterLocalNotificationsPlugin
+        .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
+        ?.requestNotificationsPermission();
+
+    final bool? exactAlarmGranted = await flutterLocalNotificationsPlugin
+        .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
+        ?.requestExactAlarmsPermission();
+
+    if ((notificationsGranted ?? false) && (exactAlarmGranted ?? true)) {
+
+      // Вычисляем время: прямо сейчас + 1 минута
+      final tz.TZDateTime scheduledTime = tz.TZDateTime.now(tz.getLocation('Europe/Moscow')).add(const Duration(minutes: 1));
+
+      const AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
+        'precise_magic_channel_id',
+        'Точные Уведомления',
+        importance: Importance.max,
+        priority: Priority.high,
+        icon: '@mipmap/ic_launcher',
+      );
+
+      // ОС Android сама берет на себя задачу показать пуш ровно через 60 сек!
+      await flutterLocalNotificationsPlugin.zonedSchedule(
+        id: 777, // ID уведомления
+        title: 'Чудо произошло! 🌟',
+        body: 'Прошла ровно 1 минута.',
+        scheduledDate: scheduledTime,
+        notificationDetails: const NotificationDetails(android: androidDetails),
+        androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle, // Пробивает режим сна и закрытое приложение
+
+        // uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
+      );
+
+      print("=== ТАЙМЕР ЗАПЛАНИРОВАН В ОС НА 1 МИНУТУ ===");
+    } else {
+      print("Нет системных разрешений!");
+    }
   }
 
   void initTabs() {
@@ -170,6 +279,20 @@ class _MainAppPage extends State<MainAppPage> {
                               end: AlignmentGeometry.topCenter,
                               stops: const [0, 0.2, 0.6]))),
                 ),
+              ),
+              Align(
+                alignment: AlignmentGeometry.bottomRight,
+                child: GestureDetector(
+                  onTap: (){
+                    ['tap'].print();
+                    showInstantNotification();
+                  },
+                  child: Container(
+                      width: 40,
+                      height: 40,
+                      color: Colors.red,
+                  ),
+                )
               )
             ],
           ),

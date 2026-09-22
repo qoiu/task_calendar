@@ -22,6 +22,10 @@ dependencies:
   shared_preferences: ^2.5.5
   dox_query_builder: ^2.1.0
 
+  flutter_local_notifications: ^22.1.0
+  android_alarm_manager_plus: ^5.1.0
+  timezone: ^0.11.1
+
   qoiu_utils:
     git:
       url:  git@github.com:/qoiu/flutter_libs

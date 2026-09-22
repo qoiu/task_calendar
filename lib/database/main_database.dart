@@ -1,4 +1,4 @@
-import 'package:qoiu_db/database/base_database_table.dart';
+import 'package:qoiu_db/database/database_table_interface.dart';
 import 'package:qoiu_db/database/database_interface.dart';
 
 import 'package:task_calendar/database/log_queries.dart';
@@ -17,5 +17,5 @@ class MainDatabase extends DatabaseInterface {
   MainDatabase() : super(databaseName: 'tasks', databaseVersion: 2);
 
   @override
-  List<BaseDatabaseTable> get tables => [DB.tasks, DB.logs, DB.skills];
+  List<DatabaseCreateTableInterface> get tables => [DB.tasks, DB.logs, DB.skills];
 }

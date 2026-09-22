@@ -32,7 +32,8 @@ class DividerItem extends StatefulWidget {
 class _DividerItemState extends State<DividerItem> {
   bool isHovered = false;
 
-  bool get isEdit =>  widget.item.isEdit;
+  bool get isEdit => widget.item.isEdit;
+
   bool get isEditTitle => widget.item.isEditTitle;
   bool isDragging = false;
 
@@ -194,7 +195,7 @@ class _DividerItemState extends State<DividerItem> {
                   child: CompositedTransformTarget(
                     link: _layerLink,
                     child: GestureDetector(
-                      onTap: show?widget.onSelect:null,
+                      onTap: show ? widget.onSelect : null,
                       child: Container(
                         decoration: BoxDecoration(
                           color: Colors.transparent,
@@ -204,9 +205,12 @@ class _DividerItemState extends State<DividerItem> {
                           ),
                         ),
                         padding: EdgeInsets.all(2),
-                        child: MaterialIcons.fromInt(57757,
+                        child: MaterialIcons.fromInt(
+                          57757,
                           size: 16,
-                          color: isEditTitle?getColorScheme().primary:getColorScheme().outline,
+                          color: isEditTitle
+                              ? getColorScheme().primary
+                              : getColorScheme().outline,
                         ),
                       ),
                     ),
@@ -218,7 +222,7 @@ class _DividerItemState extends State<DividerItem> {
                   child: CompositedTransformTarget(
                     link: _layerLink,
                     child: GestureDetector(
-                      onTap: show?() => _showFollower(context):null,
+                      onTap: show ? () => _showFollower(context) : null,
                       child: Container(
                         decoration: BoxDecoration(
                           color: Colors.transparent,
@@ -231,7 +235,9 @@ class _DividerItemState extends State<DividerItem> {
                         child: Icon(
                           Icons.color_lens_outlined,
                           size: 16,
-                          color: _overlayEntry != null?getColorScheme().primary:getColorScheme().outline,
+                          color: _overlayEntry != null
+                              ? getColorScheme().primary
+                              : getColorScheme().outline,
                         ),
                       ),
                     ),
@@ -242,14 +248,18 @@ class _DividerItemState extends State<DividerItem> {
                   duration: duration,
                   child: GestureDetector(
                     onTap: () {},
-                    onPanUpdate: show?widget.onPanUpdate:null,
-                    onPanStart: show?(p) => setState(() {
-                      isDragging = true;
-                    }):null,
-                    onPanEnd: show?(p) => setState(() {
-                      isDragging = false;
-                      ProjectDatabase.dividers.update(widget.item.toDb(), widget.item.id);
-                    }):null,
+                    onPanUpdate: show ? widget.onPanUpdate : null,
+                    onPanStart: show
+                        ? (p) => setState(() {
+                              isDragging = true;
+                            })
+                        : null,
+                    onPanEnd: show
+                        ? (p) => setState(() {
+                              isDragging = false;
+                              ProjectDatabase.dividers.update(widget.item);
+                            })
+                        : null,
                     child: Container(
                       decoration: BoxDecoration(
                         color: Colors.transparent,
@@ -259,8 +269,13 @@ class _DividerItemState extends State<DividerItem> {
                         ),
                       ),
                       padding: EdgeInsets.all(2),
-                      child: MaterialIcons.fromInt(63072, size: 16,
-                          color: isDragging?getColorScheme().primary:getColorScheme().outline,),
+                      child: MaterialIcons.fromInt(
+                        63072,
+                        size: 16,
+                        color: isDragging
+                            ? getColorScheme().primary
+                            : getColorScheme().outline,
+                      ),
                     ),
                   ),
                 ),

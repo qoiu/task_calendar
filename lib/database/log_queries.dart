@@ -1,10 +1,10 @@
 
 import 'package:task_calendar/models/calendar_log.dart';
 
-import 'package:qoiu_db/database/base_database_table.dart';
+import 'package:qoiu_db/database/database_table_interface.dart';
 
 
- class LogsQueries extends BaseDatabaseTable<CalendarLog>{
+ class LogsQueries extends DatabaseTableInterface<CalendarLog>{
 
    LogsQueries():super(name: 'logs', fromDB: CalendarLog.fromMap);
 

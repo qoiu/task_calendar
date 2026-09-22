@@ -1,9 +1,7 @@
-import 'package:qoiu_utils/qoiu_utils.dart';
+import 'package:qoiu_db/database/database_table_interface.dart';
 import 'package:task_calendar/models/skill.dart';
 
-import 'package:qoiu_db/database/base_database_table.dart';
-
-class SkillQueries extends BaseDatabaseTable<SkillData> {
+class SkillQueries extends DatabaseTableInterface<SkillData> {
   SkillQueries() : super(name: 'skills', fromDB: SkillData.fromDB);
 
   @override

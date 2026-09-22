@@ -1,13 +1,13 @@
 import 'dart:math';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:qoiu_utils/qoiu_utils.dart';
 import 'package:qoiu_utils/extensions/list_extensions.dart';
+import 'package:qoiu_utils/qoiu_utils.dart';
 import 'package:task_calendar/project_module/database/project_database.dart';
 import 'package:task_calendar/project_module/models/editable_field.dart';
 import 'package:task_calendar/project_module/models/project_data.dart';
+
 import 'components/add_divider_button.dart';
 import 'components/add_item_button.dart';
 import 'components/divider_item.dart';
@@ -73,9 +73,9 @@ class _TaskBoardState extends State<TaskBoard> {
 
   initProject() async {
     tasks =
-        await ProjectDatabase.tasks.getWhere("WHERE projectId='${project.id}'");
+        await ProjectDatabase.tasks.getAll("WHERE projectId='${project.id}'");
     dividers = await ProjectDatabase.dividers
-        .getWhere("WHERE projectId='${project.id}'");
+        .getAll("WHERE projectId='${project.id}'");
     ['dividers', dividers.map((e) => e.id).join(',')].print();
     setState(() {});
   }
@@ -122,7 +122,7 @@ class _TaskBoardState extends State<TaskBoard> {
         onScaleEnd: (e) {
           project.scale = scale;
           project.offset = offset;
-          ProjectDatabase.projects.update(project.toDb(), project.id);
+          ProjectDatabase.projects.update(project);
         },
         child: Container(color: Colors.transparent, child: child),
       ),
@@ -319,7 +319,7 @@ class _TaskBoardState extends State<TaskBoard> {
                           });
                         },
                         onDone: (e) {
-                          ProjectDatabase.tasks.update(item.toDb(), item.id);
+                          ProjectDatabase.tasks.update(item);
                           setState(() {
                             item.isEditTitle = false;
                           });
@@ -353,7 +353,7 @@ class _TaskBoardState extends State<TaskBoard> {
                           });
                         },
                         onDone: (e) {
-                          ProjectDatabase.tasks.update(item.toDb(), item.id);
+                          ProjectDatabase.tasks.update(item);
                           setState(() {
                             item.editTitle = false;
                           });
@@ -426,7 +426,7 @@ class _TaskBoardState extends State<TaskBoard> {
                             title: '',
                             color: getColorScheme().outline.withAlpha(0),
                             yPos: (e.dy / scale).toInt(),
-                          ).toDb());
+                          ));
                           setState(() {
                             dividers.add(
                               newDivider,
@@ -460,7 +460,7 @@ class _TaskBoardState extends State<TaskBoard> {
                               newTask,
                             );
                           });
-                          ProjectDatabase.tasks.add(newTask.toDb());
+                          ProjectDatabase.tasks.add(newTask);
                         },
                         child: TaskContainer(
                           size: TaskBoard.addIconSize,

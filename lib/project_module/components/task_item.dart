@@ -65,7 +65,7 @@ class _TaskItemState extends State<TaskItem> {
             },
             onPanEnd: (details) {
               ['save pan'].print();
-              ProjectDatabase.tasks.update(widget.item.toDb(), widget.item.id);
+              ProjectDatabase.tasks.update(widget.item);
             },
             child: TaskContainer(
               width: widget.size?.let((e) => e * 0.8),
@@ -100,8 +100,7 @@ class _TaskItemState extends State<TaskItem> {
                           setState(() {
                             widget.item.editTitle = false;
                           });
-                          ProjectDatabase.tasks
-                              .update(widget.item.toDb(), widget.item.id);
+                          ProjectDatabase.tasks.update(widget.item);
                         },
                       ),
                     ),

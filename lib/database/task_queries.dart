@@ -1,8 +1,8 @@
-import 'package:qoiu_db/database/base_database_table.dart';
+import 'package:qoiu_db/database/database_table_interface.dart';
 import 'package:qoiu_utils/qoiu_utils.dart';
 import 'package:task_calendar/models/task.dart';
 
-class TaskQueries extends BaseDatabaseTable<Task> {
+class TaskQueries extends DatabaseTableInterface<Task> {
   TaskQueries() : super(fromDB: Task.fromDB, name: 'tasks');
 
   @override

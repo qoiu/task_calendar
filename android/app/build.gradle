@@ -29,6 +29,7 @@ android {
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
+        coreLibraryDesugaringEnabled true // Добавьте эту строку
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
@@ -51,12 +52,17 @@ android {
             applicationIdSuffix = ".debug"
             resValue "string", "app_name", "QT debug"
             manifestPlaceholders = [appIcon: "@mipmap/ic_launcher"]
+            multiDexEnabled true // Рекомендуется включить
         }
         release {
             resValue "string", "app_name", "QTask"
             manifestPlaceholders = [appIcon: "@mipmap/ic_launcher_release"]
             signingConfig signingConfigs.debug
         }
+    }
+    dependencies {
+        // ... другие зависимости
+        coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.4' // ДОБАВЬТЕ СЮДА
     }
 }
 

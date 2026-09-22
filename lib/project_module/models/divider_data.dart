@@ -2,10 +2,12 @@ import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_color_picker_plus/flutter_color_picker_plus.dart';
+import 'package:qoiu_db/database/db_entity.dart';
 import 'package:qoiu_utils/qoiu_utils.dart';
 import 'package:qoiu_utils/typedef.dart';
 
-class DividerData {
+class DividerData extends DbEntity {
+  @override
   final int id;
   final int projectId;
   String title;
@@ -30,7 +32,8 @@ class DividerData {
         color = colorFromHex(json['color'])??getColorScheme().primary,
         yPos = json['yPos'];
 
-  JsonMap toDb() => {
+  @override
+  JsonMap toDB() => {
     'projectId': projectId,
     'title': title,
     'color': colorToHex(color),

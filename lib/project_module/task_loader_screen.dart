@@ -5,7 +5,6 @@ import 'package:task_calendar/project_module/models/project_data.dart';
 import 'package:task_calendar/project_module/task_board.dart';
 import 'package:task_calendar/project_module/utils/project_shared.dart';
 import 'package:task_calendar/screens/lists/components/main_button.dart';
-import 'package:task_calendar/utils/shared_preference.dart';
 
 class TaskLoaderScreen extends StatefulWidget {
   const TaskLoaderScreen({super.key});
@@ -28,14 +27,15 @@ class _TaskLoaderScreenState extends State<TaskLoaderScreen> {
   init() async {
     projects = await ProjectDatabase.projects.getAll();
     if (projects.isEmpty) {
-      var id = await ProjectDatabase.projects.add({'title': "Новый проект"});
+      var id = await ProjectDatabase.projects
+          .add(ProjectData(title: "Новый проект"));
       project = (await ProjectDatabase.projects.getById(id));
-      project?.let((e)=>AppSharedProject.saveLastOpenProjectID(e.id));
+      project?.let((e) => AppSharedProject.saveLastOpenProjectID(e.id));
     } else {
       var lastId = AppSharedProject.getLastOpenProjectID();
-      if(projects.map((e)=>e.id).contains(lastId)) {
+      if (projects.map((e) => e.id).contains(lastId)) {
         // projectId = lastId;
-        project = projects.where((e)=>e.id==lastId).first;
+        project = projects.where((e) => e.id == lastId).first;
       }
     }
     setState(() {
@@ -51,14 +51,15 @@ class _TaskLoaderScreenState extends State<TaskLoaderScreen> {
             ? TaskBoard(project!)
             : ListView.builder(
                 itemCount: projects.length,
-                itemBuilder: (context, index) =>
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 3),
+                itemBuilder: (context, index) => Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 3),
                       child: MainButton(projects[index].title, () {
                         setState(() {
                           project = projects[index];
                         });
-                        project?.let((e)=>AppSharedProject.saveLastOpenProjectID(e.id));
+                        project?.let((e) =>
+                            AppSharedProject.saveLastOpenProjectID(e.id));
                       }),
                     ));
   }

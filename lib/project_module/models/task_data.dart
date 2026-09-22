@@ -1,12 +1,14 @@
 import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
+import 'package:qoiu_db/database/db_entity.dart';
 import 'package:qoiu_utils/qoiu_utils.dart';
 import 'package:qoiu_utils/typedef.dart';
 
 import '../project_main_theme.dart';
 
-class ProjectTaskData {
+class ProjectTaskData extends DbEntity{
+  @override
   final int id;
   final int projectId;
   String title;
@@ -46,7 +48,8 @@ class ProjectTaskData {
         offset = Offset(json['offsetX']??0, json['offsetY']??0),
         status = parseEnum(TaskStatus.values, json['status']);
 
-  JsonMap toDb() => {
+  @override
+  JsonMap toDB() => {
         'projectId': projectId,
         'title': title,
         'icon': icon,
